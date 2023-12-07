@@ -39,5 +39,10 @@ namespace Services
             //6. Return CountryResponse object with generated CountryID.
             return country.ToCountryResponse();
         }
+
+        public List<CountryResponse> GetAllCountries()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
