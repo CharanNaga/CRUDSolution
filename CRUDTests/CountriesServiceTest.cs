@@ -81,7 +81,7 @@ namespace CRUDTests
         #endregion
 
         #region GetAllCountries
-        //Without adding any country, list should be empty. List of countries should be empty before adding any countries.
+        //1. Without adding any country, list should be empty. List of countries should be empty before adding any countries.
         [Fact]
         public void GetAllCountries_EmptyList()
         {
@@ -90,6 +90,33 @@ namespace CRUDTests
 
             //Assert
             Assert.Empty(actualCountryResponseList); //if it is empty, test case pass.
+        }
+
+        //2. If we add few countries, then same countries should be returned.
+        [Fact]
+        public void GetAllCountries_AddFewCountries()
+        {
+            //Arrange
+            List<CountryAddRequest> countryAddRequests = new List<CountryAddRequest>()
+            {
+               new CountryAddRequest(){CountryName = "India"},
+               new CountryAddRequest(){CountryName = "Australia"}
+            };
+
+            //Act
+            List<CountryResponse> countriesListFromAddCountry = new List<CountryResponse>();
+            foreach(CountryAddRequest countryRequest in countryAddRequests) //as AddCountry return type is CountryResponse. We initialize an empty list of CountryResponse type and will add the countries from request into the response list.
+            {
+                countriesListFromAddCountry.Add(_countriesService.AddCountry(countryRequest));
+            }
+
+            List<CountryResponse> actualContriesListFromAddCountry = _countriesService.GetAllCountries();
+
+            //read each element from countriesListFromAddCountry
+            foreach(CountryResponse expectedCountry in countriesListFromAddCountry)
+            {
+                Assert.Contains(expectedCountry, actualContriesListFromAddCountry);
+            }
         }
         #endregion
     }
