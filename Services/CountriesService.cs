@@ -42,7 +42,9 @@ namespace Services
 
         public List<CountryResponse> GetAllCountries()
         {
-            throw new NotImplementedException();
+            //Converts all Countries from "Country" type to "CountryResponse" type.
+            //Return all CountryResponse Objects.
+            return _countries.Select(c => c.ToCountryResponse()).ToList();
         }
     }
 }
