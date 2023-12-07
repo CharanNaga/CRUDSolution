@@ -10,10 +10,13 @@ namespace CRUDTests
     public class CountriesServiceTest
     {
         private readonly ICountriesService _countriesService;
+
+        //constructor
         public CountriesServiceTest()
         {
             _countriesService = new CountriesService();
         }
+        #region AddCountry
         //Four Requirements for Test..
         //1. When CountryAddRequest is null, throw ArgumentNullException
         [Fact]
@@ -75,5 +78,19 @@ namespace CRUDTests
             //Assert
             Assert.True(response.CountryID != Guid.Empty);
         }
+        #endregion
+
+        #region GetAllCountries
+        //Without adding any country, list should be empty. List of countries should be empty before adding any countries.
+        [Fact]
+        public void GetAllCountries_EmptyList()
+        {
+            //Acts
+            List<CountryResponse> actualCountryResponseList = _countriesService.GetAllCountries();
+
+            //Assert
+            Assert.Empty(actualCountryResponseList); //if it is empty, test case pass.
+        }
+        #endregion
     }
 }
