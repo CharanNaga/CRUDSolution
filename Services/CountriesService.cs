@@ -46,5 +46,10 @@ namespace Services
             //Return all CountryResponse Objects.
             return _countries.Select(c => c.ToCountryResponse()).ToList();
         }
+
+        public CountryResponse? GetCountryByCountryID(Guid? countryID)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
