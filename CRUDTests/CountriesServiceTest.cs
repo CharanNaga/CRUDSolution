@@ -74,9 +74,11 @@ namespace CRUDTests
 
             //Act
             CountryResponse response = _countriesService.AddCountry(request);
+            List<CountryResponse> countriesFromGetAllCountries = _countriesService.GetAllCountries(); //added country should be visible in GetAllCountries()
 
             //Assert
             Assert.True(response.CountryID != Guid.Empty);
+            Assert.Contains(response, countriesFromGetAllCountries); //It compares objects with Equals() method.Equals() by default compares by reference rather than by data.
         }
         #endregion
 
