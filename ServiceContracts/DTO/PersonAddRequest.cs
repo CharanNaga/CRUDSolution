@@ -1,4 +1,5 @@
-﻿using ServiceContracts.Enums;
+﻿using Entities;
+using ServiceContracts.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,5 +20,23 @@ namespace ServiceContracts.DTO
         public Guid? CountryID { get; set; }
         public string? Address { get; set; }
         public bool ReceiveNewsLetters { get; set; }
+
+        /// <summary>
+        /// Converts Current Object of PersonAddRequest into a new object of Person Type
+        /// </summary>
+        /// <returns></returns>
+        public Person ToPerson()
+        {
+            return new Person
+            {
+                PersonName = PersonName,
+                Email = Email,
+                DateOfBirth = DateOfBirth,
+                Gender = Gender.ToString(),
+                CountryID = CountryID,
+                Address = Address,
+                ReceiveNewsLetters = ReceiveNewsLetters
+            };
+        }
     }
 }
