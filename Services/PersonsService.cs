@@ -226,7 +226,22 @@ namespace Services
 
         public bool DeletePerson(Guid? personID)
         {
-            throw new NotImplementedException();
+            //1. Check if personID != null
+            if(personID == null)
+                throw new ArgumentNullException(nameof(personID));
+
+            //2. Get matching person object from List<Person> based on personID
+            Person? matchingPerson = _persons.FirstOrDefault(p => p.PersonID == personID);
+
+            //3. Check if matching person object is not null
+            if (matchingPerson == null)
+                return false;
+
+            //4. Delete matching person object from List<Person>
+            _persons.RemoveAll(p=>p.PersonID==personID);
+
+            //5. Return boolean value indicating person object was deleted or not
+            return true;
         }
     }
 }
