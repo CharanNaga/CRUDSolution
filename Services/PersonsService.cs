@@ -1,4 +1,5 @@
-﻿using ServiceContracts;
+﻿using Entities;
+using ServiceContracts;
 using ServiceContracts.DTO;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,13 @@ namespace Services
 {
     public class PersonsService : IPersonsService
     {
-        public PersonResponse AddPerson(PersonAddRequest personAddRequest)
+        private readonly List<Person> _persons;
+
+        public PersonsService()
+        {
+            _persons = new List<Person>();
+        }
+        public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
         {
             throw new NotImplementedException();
         }
