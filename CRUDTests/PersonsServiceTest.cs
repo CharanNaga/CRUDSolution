@@ -266,7 +266,7 @@ namespace CRUDTests
             }
         }
 
-        //1. If text string is provided as an argument and search by person name, return matching persons.
+        //2. If text string is provided as an argument and search by person name, return matching persons.
         [Fact]
         public void GetFilteredPersons_SearchByPersonName()
         {
@@ -343,6 +343,84 @@ namespace CRUDTests
                         Assert.Contains(expectedPerson, actualPersonsListFromGetFilteredPerson);
                     }
                 }
+            }
+        }
+        #endregion
+
+        #region GetSortedPersons
+        //1. when we sort based on PersonName in DESC, return persons list in DESC order on PersonName.
+        [Fact]
+        public void GetSortedPersons()
+        {
+            //Arrange
+            CountryAddRequest countryAddRequest1 = new CountryAddRequest() { CountryName = "India" };
+            CountryAddRequest countryAddRequest2 = new CountryAddRequest() { CountryName = "China" };
+
+            CountryResponse countryResponse1 = _countriesService.AddCountry(countryAddRequest1);
+            CountryResponse countryResponse2 = _countriesService.AddCountry(countryAddRequest2);
+
+            PersonAddRequest personAddRequest1 = new PersonAddRequest()
+            {
+                PersonName = "Charan",
+                Email = "sample1@gmail.com",
+                DateOfBirth = DateTime.Parse("2000-02-01"),
+                Gender = GenderOptions.Male,
+                CountryID = countryResponse1.CountryID,
+                Address = "sample1 address",
+                ReceiveNewsLetters = true
+            };
+            PersonAddRequest personAddRequest2 = new PersonAddRequest()
+            {
+                PersonName = "Harish",
+                Email = "sample2@gmail.com",
+                DateOfBirth = DateTime.Parse("2001-02-03"),
+                Gender = GenderOptions.Male,
+                CountryID = countryResponse2.CountryID,
+                Address = "sample2 address",
+                ReceiveNewsLetters = false
+            };
+            PersonAddRequest personAddRequest3 = new PersonAddRequest()
+            {
+                PersonName = "Mary",
+                Email = "sample3@gmail.com",
+                DateOfBirth = DateTime.Parse("2002-04-01"),
+                Gender = GenderOptions.Female,
+                CountryID = countryResponse2.CountryID,
+                Address = "sample3 address",
+                ReceiveNewsLetters = true
+            };
+
+            List<PersonAddRequest> personAddRequests = new List<PersonAddRequest>() { personAddRequest1, personAddRequest2, personAddRequest3 };
+
+            //Act
+            List<PersonResponse> personsListFromAddPerson = new List<PersonResponse>();
+            foreach (PersonAddRequest personRequest in personAddRequests) //as AddPerson return type is PersonResponse. We initialize an empty list of PersonResponse type and will add the persons from request into the response list.
+            {
+                personsListFromAddPerson.Add(_personsService.AddPerson(personRequest));
+            }
+            //print personListFromAddPerson
+            _testOutputHelper.WriteLine("Expected: ");
+            foreach (PersonResponse personResponse in personsListFromAddPerson)
+            {
+                _testOutputHelper.WriteLine(personResponse.ToString());
+            }
+            List<PersonResponse> personsResponseFromGetAllPersons = _personsService.GetAllPersons();
+
+            List<PersonResponse> actualPersonsListFromGetSortedPerson = _personsService.GetSortedPersons(personsResponseFromGetAllPersons,nameof(Person.PersonName),SortOrderOptions.DESC);
+
+            //print actualPersonsListFromAddPerson
+            _testOutputHelper.WriteLine("Actual: ");
+            foreach (PersonResponse personResponse in actualPersonsListFromGetSortedPerson)
+            {
+                _testOutputHelper.WriteLine(personResponse.ToString());
+            }
+
+            personsListFromAddPerson = personsListFromAddPerson.OrderByDescending(p=>p.PersonName).ToList();
+
+            //Assert
+            for(int i = 0; i < personsListFromAddPerson.Count; i++)
+            {
+                Assert.Equal(personsListFromAddPerson[i], actualPersonsListFromGetSortedPerson[i]);
             }
         }
         #endregion
