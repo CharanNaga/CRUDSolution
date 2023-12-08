@@ -462,14 +462,21 @@ namespace CRUDTests
             CountryAddRequest countryAddRequest = new CountryAddRequest() { CountryName = "UK"};
             CountryResponse countryResponseFromAdd= _countriesService.AddCountry(countryAddRequest);
 
-            PersonAddRequest personAddRequest = new PersonAddRequest() { PersonName = "Peter", CountryID = countryResponseFromAdd.CountryID };
+            PersonAddRequest personAddRequest = new PersonAddRequest() 
+            { 
+                PersonName = "Peter", 
+                CountryID = countryResponseFromAdd.CountryID,
+                Email = "peter@example.com",
+                Address = "England",
+                Gender = GenderOptions.Male
+            };
             PersonResponse personResponseFromAdd = _personsService.AddPerson(personAddRequest);
 
             PersonUpdateRequest personUpdateRequest = personResponseFromAdd.ToPersonUpdateRequest();
             personUpdateRequest.PersonName = null;
 
             //Assert
-            Assert.Throws<ArgumentNullException>(() => {
+            Assert.Throws<ArgumentException>(() => {
                 //Act
                 _personsService.UpdatePerson(personUpdateRequest);
             });
