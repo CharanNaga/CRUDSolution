@@ -50,5 +50,10 @@ namespace Services
         {
             throw new NotImplementedException();
         }
+
+        public PersonResponse GetPersonByPersonID(Guid? personID)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
