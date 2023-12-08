@@ -53,7 +53,18 @@ namespace Services
 
         public PersonResponse? GetPersonByPersonID(Guid? personID)
         {
-            throw new NotImplementedException();
+            //1. Check personID != null
+            if (personID == null)
+                return null;
+
+            //2. Get matching person from List<Person> based on personID
+            Person? personsFromList = _persons.FirstOrDefault(p=>p.PersonID == personID);
+
+            //3. Convert matching person object from Person to PersonResponse type
+            //4. Return PersonResponse Object
+            if(personsFromList == null)
+                return null;
+            return personsFromList.ToPersonResponse();
         }
     }
 }
