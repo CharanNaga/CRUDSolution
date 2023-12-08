@@ -49,6 +49,11 @@ namespace ServiceContracts.DTO
         {
             return base.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return $"Person Id: {PersonID}, Person Name: {PersonName}, Email: {Email}, Date Of Birth: {DateOfBirth?.ToString("dd MMM yyyy")}, Gender: {Gender}, Country ID: {CountryID}, Address: {Address}, Receive News Letters: {ReceiveNewsLetters}, Age:{Age??0}";
+        }
     }
     //To Convert object of Person type to PersonResponse type, we create extension method.
     //For retrieving list of persons & by default data store stores list of persons as objects of Person class.
