@@ -74,6 +74,65 @@ namespace CRUDTests
         }
         #endregion
 
+        #region GetAllPersons
+        //1. Without adding any person, list should be empty. List of persons should be empty before adding any persons.
+        [Fact]
+        public void GetAllPersons_EmptyList()
+        {
+            //Act 
+            List<PersonResponse> personsResponseList = _personsService.GetAllPersons();
+
+            //Assert
+            Assert.Empty(personsResponseList);
+        }
+        //2. If we add few persons, then same persons should be returned.
+        [Fact]
+        public void GetAllPersons_AddFewPersons()
+        {
+            //Arrange
+            CountryAddRequest countryAddRequest1 = new CountryAddRequest() { CountryName = "India" };
+            CountryAddRequest countryAddRequest2 = new CountryAddRequest() { CountryName = "China" };
+
+            CountryResponse countryResponse1 = _countriesService.AddCountry(countryAddRequest1);
+            CountryResponse countryResponse2 = _countriesService.AddCountry(countryAddRequest2);
+
+            PersonAddRequest personAddRequest1 = new PersonAddRequest()
+            {
+                PersonName = "Sample Name1",
+                Email = "sample1@gmail.com",
+                DateOfBirth = DateTime.Parse("2000-02-01"),
+                Gender = GenderOptions.Male,
+                CountryID = countryResponse1.CountryID,
+                Address = "sample1 address",
+                ReceiveNewsLetters = true
+            };
+            PersonAddRequest personAddRequest2 = new PersonAddRequest()
+            {
+                PersonName = "Sample Name2",
+                Email = "sample2@gmail.com",
+                DateOfBirth = DateTime.Parse("2001-02-03"),
+                Gender = GenderOptions.Female,
+                CountryID = countryResponse2.CountryID,
+                Address = "sample2 address",
+                ReceiveNewsLetters = false
+            };
+            List<PersonAddRequest> personAddRequests = new List<PersonAddRequest>() { personAddRequest1, personAddRequest2 };
+            //Act
+            List<PersonResponse> personsListFromAddPerson = new List<PersonResponse>();
+            foreach (PersonAddRequest personRequest in personAddRequests) //as AddPerson return type is PersonResponse. We initialize an empty list of PersonResponse type and will add the persons from request into the response list.
+            {
+                personsListFromAddPerson.Add(_personsService.AddPerson(personRequest));
+            }
+            List<PersonResponse> actualPersonsListFromAddPerson = _personsService.GetAllPersons();
+            //read each element from personsListFromAddPerson
+            foreach (PersonResponse expectedPerson in personsListFromAddPerson)
+            {
+                //Assert
+                Assert.Contains(expectedPerson, actualPersonsListFromAddPerson);
+            }
+        }
+        #endregion
+
         #region GetPersonByPersonID
         //1. If PersonID supplied is null, return null as PersonResponse
         [Fact]
