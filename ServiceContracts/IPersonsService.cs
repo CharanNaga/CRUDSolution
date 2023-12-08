@@ -17,7 +17,7 @@ namespace ServiceContracts
         /// </summary>
         /// <param name="personAddRequest">Person to add</param>
         /// <returns>Returns same person details along with newly generated PersonID</returns>
-        PersonResponse AddPerson(PersonAddRequest personAddRequest);
+        PersonResponse AddPerson(PersonAddRequest? personAddRequest);
 
         /// <summary>
         /// Returns all Persons
