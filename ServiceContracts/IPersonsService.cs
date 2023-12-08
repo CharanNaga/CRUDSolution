@@ -30,6 +30,6 @@ namespace ServiceContracts
         /// </summary>
         /// <param name="personID">PersonID to search</param>
         /// <returns>Matching person as a PersonResponse object</returns>
-        PersonResponse GetPersonByPersonID(Guid? personID);
+        PersonResponse? GetPersonByPersonID(Guid? personID);
     }
 }
