@@ -2,6 +2,7 @@
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
+using Xunit.Abstractions;
 
 namespace CRUDTests
 {
@@ -10,12 +11,14 @@ namespace CRUDTests
         //private field
         private readonly IPersonsService _personsService;
         private readonly ICountriesService _countriesService;
+        private readonly ITestOutputHelper _testOutputHelper;
 
         //constructor
-        public PersonsServiceTest()
+        public PersonsServiceTest(ITestOutputHelper testOutputHelper)
         {
             _personsService = new PersonsService();
             _countriesService = new CountriesService();
+            _testOutputHelper = testOutputHelper;
         }
 
         #region AddPerson
@@ -116,14 +119,31 @@ namespace CRUDTests
                 Address = "sample2 address",
                 ReceiveNewsLetters = false
             };
+
             List<PersonAddRequest> personAddRequests = new List<PersonAddRequest>() { personAddRequest1, personAddRequest2 };
+
             //Act
             List<PersonResponse> personsListFromAddPerson = new List<PersonResponse>();
             foreach (PersonAddRequest personRequest in personAddRequests) //as AddPerson return type is PersonResponse. We initialize an empty list of PersonResponse type and will add the persons from request into the response list.
             {
                 personsListFromAddPerson.Add(_personsService.AddPerson(personRequest));
             }
+            //print personListFromAddPerson
+            _testOutputHelper.WriteLine("Expected: ");
+            foreach(PersonResponse personResponse in personsListFromAddPerson)
+            {
+                _testOutputHelper.WriteLine(personResponse.ToString());
+            }
+
             List<PersonResponse> actualPersonsListFromAddPerson = _personsService.GetAllPersons();
+
+            //print actualPersonsListFromAddPerson
+            _testOutputHelper.WriteLine("Actual: ");
+            foreach (PersonResponse personResponse in actualPersonsListFromAddPerson)
+            {
+                _testOutputHelper.WriteLine(personResponse.ToString());
+            }
+
             //read each element from personsListFromAddPerson
             foreach (PersonResponse expectedPerson in personsListFromAddPerson)
             {
