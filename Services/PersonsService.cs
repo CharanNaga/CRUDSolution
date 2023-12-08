@@ -223,5 +223,10 @@ namespace Services
             //7. Return PersonResponse object with updated details
             return matchingPerson.ToPersonResponse();
         }
+
+        public bool DeletePerson(Guid? personID)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
