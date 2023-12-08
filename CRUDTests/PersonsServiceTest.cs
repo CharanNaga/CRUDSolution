@@ -424,5 +424,89 @@ namespace CRUDTests
             }
         }
         #endregion
+
+        #region UpdatePerson
+        //1. When PersonUpdateRequest is null, throw ArgumentNullException
+        [Fact]
+        public void UpdatePerson_NullPerson()
+        {
+            //Arrange
+            PersonUpdateRequest? personUpdateRequest = null;
+
+            //Assert
+            Assert.Throws<ArgumentNullException>(() => {
+                //Act
+                _personsService.UpdatePerson(personUpdateRequest);
+            });
+        }
+
+        //2. If PersonID is invalid, throw ArgumentException
+        [Fact]
+        public void UpdatePerson_InvalidPersonID()
+        {
+            //Arrange
+            PersonUpdateRequest? personUpdateRequest = new PersonUpdateRequest() { PersonID = Guid.NewGuid()};
+
+            //Assert
+            Assert.Throws<ArgumentException>(() => {
+                //Act
+                _personsService.UpdatePerson(personUpdateRequest);
+            });
+        }
+
+        //3. When PersonName is null, throw ArgumentException
+        [Fact]
+        public void UpdatePerson_PersonNameIsNull()
+        {
+            //Arrange
+            CountryAddRequest countryAddRequest = new CountryAddRequest() { CountryName = "UK"};
+            CountryResponse countryResponseFromAdd= _countriesService.AddCountry(countryAddRequest);
+
+            PersonAddRequest personAddRequest = new PersonAddRequest() { PersonName = "Peter", CountryID = countryResponseFromAdd.CountryID };
+            PersonResponse personResponseFromAdd = _personsService.AddPerson(personAddRequest);
+
+            PersonUpdateRequest personUpdateRequest = personResponseFromAdd.ToPersonUpdateRequest();
+            personUpdateRequest.PersonName = null;
+
+            //Assert
+            Assert.Throws<ArgumentNullException>(() => {
+                //Act
+                _personsService.UpdatePerson(personUpdateRequest);
+            });
+        }
+
+        //4. When Proper Person Details are given, update the PersonResponse Object
+        //First, add a new person and try to update the person name and email
+        [Fact]
+        public void UpdatePerson_PersonFullDetailsUpdation()
+        {
+            //Arrange
+            CountryAddRequest countryAddRequest = new CountryAddRequest() { CountryName = "UK" };
+            CountryResponse countryResponseFromAdd = _countriesService.AddCountry(countryAddRequest);
+
+            PersonAddRequest personAddRequest = new PersonAddRequest() 
+            {
+                PersonName = "Peter", 
+                Email = "peter@gmail.com",
+                DateOfBirth = DateTime.Parse("2001-04-01"),
+                Gender = GenderOptions.Male,
+                CountryID = countryResponseFromAdd.CountryID,
+                Address = "Peter street",
+                ReceiveNewsLetters = true
+            };
+            PersonResponse personResponseFromAdd = _personsService.AddPerson(personAddRequest);
+
+            PersonUpdateRequest personUpdateRequest = personResponseFromAdd.ToPersonUpdateRequest();
+            personUpdateRequest.PersonName = "William";
+            personUpdateRequest.Email = "william@gmail.com";
+
+            //Act
+            PersonResponse personResponseFromUpdate = _personsService.UpdatePerson(personUpdateRequest);
+            PersonResponse? personResponseFromGet = _personsService.GetPersonByPersonID(personUpdateRequest.PersonID);
+
+            //Assert
+            Assert.Equal(personResponseFromGet,personResponseFromUpdate);
+        }
+        #endregion
     }
 }
