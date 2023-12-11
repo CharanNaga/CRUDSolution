@@ -8,9 +8,47 @@ namespace Services
     {
         private readonly List<Country> _countries;
 
-        public CountriesService()
+        //while invoking this Service in Tests, we don't want to initialize mock data and while invoking in Controllers, we want to add mock data.
+        //so taking a bool variable "initialize" and setting false in Tests and setting as true at other places.
+        public CountriesService(bool initialize=true) 
         {
-            _countries = new List<Country>(); 
+            _countries = new List<Country>();
+            if (initialize)
+            {
+                _countries.AddRange(
+                    new List<Country>()
+                    {
+                        new Country()
+                        {
+                            CountryID = Guid.Parse("E2F8A875-0573-4D3D-AC5B-42A3160BD363"),
+                            CountryName = "USA"
+                        },
+
+                        new Country()
+                        {
+                            CountryID = Guid.Parse("064504EA-B4F8-4658-B1FD-B214F5EB5BC7"),
+                            CountryName = "Canada"
+                        },
+
+                        new Country()
+                        {
+                            CountryID = Guid.Parse("335D73C1-E274-4406-A737-E65E8C33881F"),
+                            CountryName = "UK"
+                        },
+
+                        new Country()
+                        {
+                            CountryID = Guid.Parse("E1CC350D-3293-40B3-9B3A-679B90ACB48F"),
+                            CountryName = "India"
+                        },
+
+                        new Country()
+                        {
+                            CountryID = Guid.Parse("E35E212B-D6BF-4B43-AB19-EA1587E9B4BF"),
+                            CountryName = "Australia"
+                        }
+                    });
+            }
         }
         public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
         {
