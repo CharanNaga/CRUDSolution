@@ -12,10 +12,135 @@ namespace Services
         private readonly List<Person> _persons;
         private readonly ICountriesService _countriesService;
 
-        public PersonsService()
+        //while invoking this Service in Tests, we don't want to initialize mock data and while invoking in Controllers, we want to add mock data.
+        //so taking a bool variable "initialize" and setting false in Tests and setting as true at other places.
+        public PersonsService(bool initialize = true)
         {
             _persons = new List<Person>();
             _countriesService = new CountriesService();
+            if(initialize)
+            {
+                //Added mock data using mockaroo website
+                _persons.Add(new Person()
+                {
+                    PersonID = Guid.Parse("1D163731-4D22-43B3-AD2B-37CFF2A30BD0"),
+                    PersonName = "Adrien",
+                    Email = "asissens0@geocities.com",
+                    DateOfBirth = DateTime.Parse("1991-10-21"),
+                    Gender = "Male",
+                    Address = "59870 Walton Pass",
+                    ReceiveNewsLetters = false,
+                    CountryID = Guid.Parse("E2F8A875-0573-4D3D-AC5B-42A3160BD363")
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonID = Guid.Parse("5A527B11-9ABB-4C40-AD94-7B182AA96EB7"),
+                    PersonName = "Manon",
+                    Email = "mskate1@umich.edu",
+                    DateOfBirth = DateTime.Parse("1995-06-09"),
+                    Gender = "Female",
+                    Address = "0217 Westerfield Avenue",
+                    ReceiveNewsLetters = false,
+                    CountryID = Guid.Parse("064504EA-B4F8-4658-B1FD-B214F5EB5BC7")
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonID = Guid.Parse("44EFFA99-6BCC-4C13-8774-E2EF1BE6FB5B"),
+                    PersonName = "Therese",
+                    Email = "tpawelski2@nasa.gov",
+                    DateOfBirth = DateTime.Parse("1996-05-20"),
+                    Gender = "Female",
+                    Address = "5 Debra Crossing",
+                    ReceiveNewsLetters = true,
+                    CountryID = Guid.Parse("335D73C1-E274-4406-A737-E65E8C33881F")
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonID = Guid.Parse("908C7B7A-F9D2-40FF-AD86-DB8F61BBE044"),
+                    PersonName = "Duffy",
+                    Email = "dmcnuff3@gravatar.com",
+                    DateOfBirth = DateTime.Parse("1995-05-11"),
+                    Gender = "Male",
+                    Address = "7 Thierer Lane",
+                    ReceiveNewsLetters = true,
+                    CountryID = Guid.Parse("E1CC350D-3293-40B3-9B3A-679B90ACB48F")
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonID = Guid.Parse("A16A8536-BA4E-415A-989E-876911BA1079"),
+                    PersonName = "Egor",
+                    Email = "ewalduck4@cbslocal.com",
+                    DateOfBirth = DateTime.Parse("1996-06-14"),
+                    Gender = "Male",
+                    Address = "08748 Birchwood Road",
+                    ReceiveNewsLetters = false,
+                    CountryID = Guid.Parse("E35E212B-D6BF-4B43-AB19-EA1587E9B4BF")
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonID = Guid.Parse("14E2D400-A3F9-427A-AA12-3316CF52B2B1"),
+                    PersonName = "Reginauld",
+                    Email = "rwilsee5@unblog.fr",
+                    DateOfBirth = DateTime.Parse("1991-07-18"),
+                    Gender = "Male",
+                    Address = "47 Miller Park",
+                    ReceiveNewsLetters = false,
+                    CountryID = Guid.Parse("E2F8A875-0573-4D3D-AC5B-42A3160BD363")
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonID = Guid.Parse("512D5D5A-5346-4960-8201-BC17FF827E9E"),
+                    PersonName = "Celestina",
+                    Email = "cwarby6@mayoclinic.com",
+                    DateOfBirth = DateTime.Parse("1996-05-14"),
+                    Gender = "Female",
+                    Address = "24 Algoma Way",
+                    ReceiveNewsLetters = true,
+                    CountryID = Guid.Parse("064504EA-B4F8-4658-B1FD-B214F5EB5BC7")
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonID = Guid.Parse("D99A6448-8C9B-4448-B2D6-1C5AA38FCF1D"),
+                    PersonName = "Anne",
+                    Email = "ahick7@stanford.edu",
+                    DateOfBirth = DateTime.Parse("1998-09-22"),
+                    Gender = "Female",
+                    Address = "05 Daystar Court",
+                    ReceiveNewsLetters = false,
+                    CountryID = Guid.Parse("335D73C1-E274-4406-A737-E65E8C33881F")
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonID = Guid.Parse("0F23EC13-524D-4542-8B0D-1C34C0158805"),
+                    PersonName = "Granthem",
+                    Email = "gbunhill8@ibm.com",
+                    DateOfBirth = DateTime.Parse("1994-04-26"),
+                    Gender = "Male",
+                    Address = "98644 Cordelia Plaza",
+                    ReceiveNewsLetters = true,
+                    CountryID = Guid.Parse("E1CC350D-3293-40B3-9B3A-679B90ACB48F")
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonID = Guid.Parse("0D5F63E6-B1D2-47E8-9596-916E89F7D7DE"),
+                    PersonName = "Dedra",
+                    Email = "dtinker9@networkadvertising.org",
+                    DateOfBirth = DateTime.Parse("1999-12-02"),
+                    Gender = "Female",
+                    Address = "21 Cambridge Trail",
+                    ReceiveNewsLetters = true,
+                    CountryID = Guid.Parse("E35E212B-D6BF-4B43-AB19-EA1587E9B4BF")
+                });
+            }
         }
         //Helper method to convert Person to PersonResponse. We have every property except Country property in PersonResponse. 
         //So assigning the Country property with the CountryName property which is available from GetCountryByCountryID() from CountriesService.
