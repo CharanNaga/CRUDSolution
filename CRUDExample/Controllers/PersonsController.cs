@@ -44,6 +44,7 @@ namespace CRUDExample.Controllers
             return View(sortedPersons);
         }
 
+        //Executes when user clicks on hyperlink "Create Person", while opening the create view.
         [Route("persons/create")]
         [HttpGet]
         public IActionResult Create()
@@ -53,5 +54,22 @@ namespace CRUDExample.Controllers
             return View();
         }
 
+        //Executes when user click on submit button in create view.
+        [Route("persons/create")]
+        [HttpPost]
+        public IActionResult Create(PersonAddRequest request)
+        {
+            if(!ModelState.IsValid)
+            {
+                List<CountryResponse> countries = _countriesService.GetAllCountries();
+                ViewBag.Countries = countries;
+                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return View();
+            }
+            //calling service
+            PersonResponse personResponse = _personsService.AddPerson(request);
+            //navigate to Index(), after adding new person and it makes another get request to persons/index.
+            return RedirectToAction("Index","Persons");
+        }
     }
 }
