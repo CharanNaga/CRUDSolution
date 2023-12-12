@@ -42,7 +42,30 @@
     <table class="table w-100 mt">
         <thead>
             <tr>
-                <th>Person Name</th>
+                @if(ViewBag.CurrentSortBy == nameof(PersonResponse.PersonName) && ViewBag.CurrentSortOrder == SortOrderOptions.ASC.ToString())
+                {
+                    <th>
+                        <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@nameof(SortOrderOptions.DESC)">
+                            Person Name
+                        </a>
+                    </th>
+                }
+                else if (ViewBag.CurrentSortBy == nameof(PersonResponse.PersonName) && ViewBag.CurrentSortOrder == SortOrderOptions.DESC.ToString())
+                {
+                    <th>
+                        <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@nameof(SortOrderOptions.ASC)">
+                            Person Name
+                        </a>
+                    </th>
+                }
+                else
+                {
+                    <th>
+                        <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@nameof(SortOrderOptions.ASC)">
+                            Person Name
+                        </a>
+                    </th>
+                }
                 <th>Email</th>
                 <th>Date Of Birth</th>
                 <th>Age</th>
