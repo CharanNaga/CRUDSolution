@@ -5,6 +5,18 @@
 @* ctrl + k, ctrl + d => shortcut for proper formatting the document
     ctrl + k, ctrl + f => shortcut for selective formatting code.
 *@
+
+@functions{
+    async Task RenderGridColumnHeader(string columnName, string displayName)
+    {
+        @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData)
+        {
+            {"ColumnName", columnName},
+            {"DisplayName", displayName}
+        })
+    }
+}
+
 <form action="~/persons/index" method="get"> 
     <h1>Persons</h1>
     <div class="box flex">
@@ -42,7 +54,7 @@
     <table class="table w-100 mt">
         <thead>
             <tr>
-                @await Html.PartialAsync("_GridColumnHeader",new ViewDataDictionary(ViewData){
+                @*@await Html.PartialAsync("_GridColumnHeader",new ViewDataDictionary(ViewData){
                     {"ColumnName",nameof(PersonResponse.PersonName)},
                     {"DisplayName","Person Name"}
                 })
@@ -80,7 +92,17 @@
                 @await Html.PartialAsync("_GridColumnHeader",new ViewDataDictionary(ViewData){
                     {"ColumnName",nameof(PersonResponse.ReceiveNewsLetters)},
                     {"DisplayName","Receive Newsletters"}
-                })
+                })*@
+                @{
+                    await RenderGridColumnHeader(nameof(PersonResponse.PersonName), "Person Name");
+                    await RenderGridColumnHeader(nameof(PersonResponse.Email), "Email");
+                    await RenderGridColumnHeader(nameof(PersonResponse.DateOfBirth), "DOB");
+                    await RenderGridColumnHeader(nameof(PersonResponse.Age), "Age");
+                    await RenderGridColumnHeader(nameof(PersonResponse.Gender), "Gender");
+                    await RenderGridColumnHeader(nameof(PersonResponse.Country), "Country");
+                    await RenderGridColumnHeader(nameof(PersonResponse.Address), "Address");
+                    await RenderGridColumnHeader(nameof(PersonResponse.ReceiveNewsLetters), "Receive Newsletters");
+                }
             </tr>
         </thead>
 
