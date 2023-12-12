@@ -5,7 +5,8 @@ using ServiceContracts.Enums;
 
 namespace CRUDExample.Controllers
 {
-    [Route("persons")] //applied for all action methods in this controller, so we can remove persons/index as just index
+    //[Route("persons")] //applied for all action methods in this controller, so we can remove persons/index as just index
+    [Route("[controller]")] //Same as above but implementing using Route Token. In future, if controller name changes then this route token is helpful.
     public class PersonsController : Controller
     {
         //private fields
@@ -19,7 +20,8 @@ namespace CRUDExample.Controllers
             _countriesService = countriesService;
         }
 
-        [Route("index")] //read as "persons/index"
+        //[Route("index")] //read as "persons/index"
+        [Route("[action]")] //Same as above but implemented using Route Token. Holds good, when Action Method Name & Url Name are same otherwise explicitly mention the url string.
         [Route("/")] // overriden as just "/", / indicates overriding default url
         public IActionResult Index(string searchBy,string? searchString,string sortBy=nameof(PersonResponse.PersonName),SortOrderOptions sortOrder=SortOrderOptions.ASC)
         {
@@ -46,7 +48,8 @@ namespace CRUDExample.Controllers
         }
 
         //Executes when user clicks on hyperlink "Create Person", while opening the create view.
-        [Route("create")]
+        //[Route("create")]
+        [Route("[action]")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -56,7 +59,8 @@ namespace CRUDExample.Controllers
         }
 
         //Executes when user click on submit button in create view.
-        [Route("create")]
+        //[Route("create")]
+        [Route("[action]")]
         [HttpPost]
         public IActionResult Create(PersonAddRequest request)
         {
