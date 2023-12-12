@@ -5,6 +5,7 @@ using ServiceContracts.Enums;
 
 namespace CRUDExample.Controllers
 {
+    [Route("persons")] //applied for all action methods in this controller, so we can remove persons/index as just index
     public class PersonsController : Controller
     {
         //private fields
@@ -18,8 +19,8 @@ namespace CRUDExample.Controllers
             _countriesService = countriesService;
         }
 
-        [Route("persons/index")]
-        [Route("/")]
+        [Route("index")] //read as "persons/index"
+        [Route("/")] // overriden as just "/", / indicates overriding default url
         public IActionResult Index(string searchBy,string? searchString,string sortBy=nameof(PersonResponse.PersonName),SortOrderOptions sortOrder=SortOrderOptions.ASC)
         {
             //Searching
@@ -45,7 +46,7 @@ namespace CRUDExample.Controllers
         }
 
         //Executes when user clicks on hyperlink "Create Person", while opening the create view.
-        [Route("persons/create")]
+        [Route("create")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -55,7 +56,7 @@ namespace CRUDExample.Controllers
         }
 
         //Executes when user click on submit button in create view.
-        [Route("persons/create")]
+        [Route("create")]
         [HttpPost]
         public IActionResult Create(PersonAddRequest request)
         {
