@@ -37,7 +37,7 @@ namespace CRUDExample.Controllers
             //Sorting
             List<PersonResponse> sortedPersons = _personsService.GetSortedPersons(persons,sortBy,sortOrder);
             ViewBag.CurrentSortBy = sortBy;
-            ViewBag.CurrentSortOrder = sortOrder;
+            ViewBag.CurrentSortOrder = sortOrder.ToString();
 
             return View(persons);
         }
