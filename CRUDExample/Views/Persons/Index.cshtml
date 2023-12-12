@@ -48,6 +48,7 @@
                         <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@nameof(SortOrderOptions.DESC)">
                             Person Name
                         </a>
+                        <i class="fa-solid fa-sort-up"></i>
                     </th>
                 }
                 else if (ViewBag.CurrentSortBy == nameof(PersonResponse.PersonName) && ViewBag.CurrentSortOrder == SortOrderOptions.DESC.ToString())
@@ -56,6 +57,7 @@
                         <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@nameof(SortOrderOptions.ASC)">
                             Person Name
                         </a>
+                        <i class="fa-solid fa-sort-down"></i>
                     </th>
                 }
                 else
