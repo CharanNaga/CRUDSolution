@@ -176,7 +176,7 @@ namespace Services
         {
             //Converts all persons from "Person" type to "PersonResponse" type.
             //Return all PersonResponse Objects.
-            return _persons.Select(p => p.ToPersonResponse()).ToList();
+            return _persons.Select(p => ConvertPersonToPersonResponse(p)).ToList();
         }
 
         public PersonResponse? GetPersonByPersonID(Guid? personID)
