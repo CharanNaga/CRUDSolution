@@ -2,56 +2,64 @@
 @{
     ViewBag.Title = "Persons";
 }
+@* ctrl + k, ctrl + d => shortcut for proper formatting the document
+    ctrl + k, ctrl + f => shortcut for selective formatting code.
+*@
+<form action="~/persons/index" method="get"> 
+    <h1>Persons</h1>
+    <div class="box flex">
+        <div class="flex-1">
+            <select class="form-input" name="searchBy">
+                @foreach (var field in ViewBag.SearchFields)
+                {
+                    <option value="@field.Key">@field.Value</option>
+                    @* Eg: searchBy=PersonName&searchString=abc (Query string)
+                        With Form, along with GET request we send the data to the controller in form-urlencoded format
+                        which can be received in controller through model binding. 
+                        So, we'll specify searchBy and searchString (properties from name property in option & input tags) in controller.
+                    *@
+                }
+            </select>
+        </div>
 
-<h1>Persons</h1>
+        <div class="flex-1">
+            <input type="search" id="Search" class="form-input" placeholder="Search" name="searchString" />
+        </div>
 
-<div class="box flex">
-    <div class="flex-1">
-        <select class="form-input">
-            @foreach(var field in ViewBag.SearchFields)
-            {
-                <option value=@field.Key>@field.Value</option>
-            }
-        </select>
+        <div class="flex-1">
+            <button class="button button-blue-back">Search</button>
+            <a href="~/persons/index" class="link-hover">Clear all</a>
+        </div>
     </div>
 
-    <div class="flex-1">
-        <input type="search" id="Search" class="form-input" placeholder="Search"/>
-    </div>
-
-    <div class="flex-1">
-        <button class="button button-blue-back">Search</button>
-        <a href="~/persons/index" class="link-hover">Clear all</a>
-    </div>
-</div>
-
-<table class="table w-100 mt">
-    <thead>
-        <tr>
-            <th>Person Name</th>
-            <th>Email</th>
-            <th>Date Of Birth</th>
-            <th>Age</th>
-            <th>Gender</th>
-            <th>Country</th>
-            <th>Address</th>
-            <th>Receive Newsletters</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach(PersonResponse person in Model)
-        {
+    <table class="table w-100 mt">
+        <thead>
             <tr>
-                <td>@person.PersonName</td>
-                <td>@person.Email</td>
-                <td>@person.DateOfBirth?.ToString("dd MMM yyyy")</td>
-                <td>@person.Age</td>
-                <td>@person.Gender</td>
-                <td>@person.Country</td>
-                <td>@person.Address</td>
-                <td>@person.ReceiveNewsLetters</td>
+                <th>Person Name</th>
+                <th>Email</th>
+                <th>Date Of Birth</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Country</th>
+                <th>Address</th>
+                <th>Receive Newsletters</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+
+        <tbody>
+            @foreach (PersonResponse person in Model)
+            {
+                <tr>
+                    <td>@person.PersonName</td>
+                    <td>@person.Email</td>
+                    <td>@person.DateOfBirth?.ToString("dd MMM yyyy")</td>
+                    <td>@person.Age</td>
+                    <td>@person.Gender</td>
+                    <td>@person.Country</td>
+                    <td>@person.Address</td>
+                    <td>@person.ReceiveNewsLetters</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
