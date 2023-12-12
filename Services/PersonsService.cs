@@ -192,7 +192,7 @@ namespace Services
             //4. Return PersonResponse Object
             if(personsFromList == null)
                 return null;
-            return personsFromList.ToPersonResponse();
+            return ConvertPersonToPersonResponse(personsFromList);
         }
 
         public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString)
