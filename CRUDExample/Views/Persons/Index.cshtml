@@ -12,7 +12,14 @@
             <select class="form-input" name="searchBy">
                 @foreach (var field in ViewBag.SearchFields)
                 {
-                    <option value="@field.Key">@field.Value</option>
+                    if(field.Key == ViewBag.CurrentSearchBy)
+                    {
+                        <option value="@field.Key" selected= "selected">@field.Value</option>
+                    }
+                    else
+                    {
+                        <option value="@field.Key">@field.Value</option>
+                    }
                     @* Eg: searchBy=PersonName&searchString=abc (Query string)
                         With Form, along with GET request we send the data to the controller in form-urlencoded format
                         which can be received in controller through model binding. 
@@ -23,7 +30,7 @@
         </div>
 
         <div class="flex-1">
-            <input type="search" id="Search" class="form-input" placeholder="Search" name="searchString" />
+            <input type="search" id="Search" class="form-input" placeholder="Search" name="searchString" value="@ViewBag.CurrentSearchString"/>
         </div>
 
         <div class="flex-1">
