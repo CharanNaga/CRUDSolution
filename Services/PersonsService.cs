@@ -346,7 +346,7 @@ namespace Services
 
             //6. Convert the Person object to PersonResponse object
             //7. Return PersonResponse object with updated details
-            return matchingPerson.ToPersonResponse();
+            return ConvertPersonToPersonResponse(matchingPerson);
         }
 
         public bool DeletePerson(Guid? personID)
