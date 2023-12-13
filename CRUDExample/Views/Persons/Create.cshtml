@@ -9,7 +9,7 @@
         @*PersonName field*@
         <div class="form-field flex">
             <div class="w-25">
-                <label for="PersonName" class="form-label pt">Person Name</label>
+                <label asp-for="PersonName" class="form-label pt">Person Name</label>
             </div>
 
             <div class="flex-1"> @*For form inputs, we should have 'name' attribute for select & input tags so that we can submit then only*@
@@ -21,7 +21,7 @@
         @*Email field*@
         <div class="form-field flex">
             <div class="w-25">
-                <label for="Email" class="form-label pt">Email</label>
+                <label asp-for="Email" class="form-label pt">Email</label>
             </div>
 
             <div class="flex-1">
@@ -34,7 +34,7 @@
         @*Date of Birth*@
         <div class="form-field flex">
             <div class="w-25">
-                <label for="DateOfBirth" class="form-label pt">Date of Birth</label>
+                <label asp-for="DateOfBirth" class="form-label pt">Date of Birth</label>
             </div>
 
             <div class="flex-1">
@@ -47,7 +47,7 @@
         @*Gender*@
         <div class="form-field flex">
             <div class="w-25">
-                <label for="Gender" class="form-label pt">Gender</label>
+                <label asp-for="Gender" class="form-label pt">Gender</label>
             </div>
 
             <div class="flex-1">
@@ -74,18 +74,18 @@
         @*Country*@
         <div class="form-field flex">
             <div class="w-25">
-                <label for="CountryID" class="form-label pt">Country</label>
+                <label asp-for="CountryID" class="form-label pt">Country</label>
             </div>
 
             <div class="flex-1">
                 @*For form inputs, we should have 'name' attribute for select & input tags so that we can submit then only*@
                @* <select name="CountryID" id="CountryID" class="form-input">*@
-                <select asp-for="CountryID" class="form-input">
+                <select asp-for="CountryID" class="form-input" asp-items="@ViewBag.Countries">
                     <option value="">Please Select</option>
-                    @foreach(CountryResponse country in ViewBag.Countries)
+                   @* @foreach(CountryResponse country in ViewBag.Countries)
                     {
                         <option value="@country.CountryID">@country.CountryName</option>
-                    }
+                    }*@
                 </select>
             </div>
         </div>
@@ -93,7 +93,7 @@
         @*Address*@
         <div class="form-field flex">
             <div class="w-25">
-                <label for="Address" class="form-label pt">Address</label>
+                <label asp-for="Address" class="form-label pt">Address</label>
             </div>
 
             <div class="flex-1">
@@ -108,7 +108,7 @@
             <div class="flex-1">
                @*<input type="checkbox" id="ReceiveNewsLetters" name="ReceiveNewsLetters" value="true"/>*@
                <input asp-for="ReceiveNewsLetters" value="true"/>
-               <label for="ReceiveNewsLetters" class="form-label">Receive News Letters</label>
+               <label asp-for="ReceiveNewsLetters" class="form-label">Receive News Letters</label>
             </div>
         </div>
 
