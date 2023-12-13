@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -23,24 +24,24 @@ namespace CRUDExample.Controllers
         //[Route("index")] //read as "persons/index"
         [Route("[action]")] //Same as above but implemented using Route Token. Holds good, when Action Method Name & Url Name are same otherwise explicitly mention the url string.
         [Route("/")] // overriden as just "/", / indicates overriding default url
-        public IActionResult Index(string searchBy,string? searchString,string sortBy=nameof(PersonResponse.PersonName),SortOrderOptions sortOrder=SortOrderOptions.ASC)
+        public IActionResult Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
             //Searching
             ViewBag.SearchFields = new Dictionary<string, string>()
             {//property name & display name
-                {nameof(PersonResponse.PersonName), "Person Name" }, 
+                {nameof(PersonResponse.PersonName), "Person Name" },
                 {nameof(PersonResponse.Email), "Email" },
                 {nameof(PersonResponse.DateOfBirth), "Date of Birth" },
                 {nameof(PersonResponse.Gender), "Gender" },
                 {nameof(PersonResponse.CountryID), "Country" },
                 {nameof(PersonResponse.Address), "Address" },
             };
-            List<PersonResponse> persons = _personsService.GetFilteredPersons(searchBy,searchString);
+            List<PersonResponse> persons = _personsService.GetFilteredPersons(searchBy, searchString);
             ViewBag.CurrentSearchBy = searchBy;
             ViewBag.CurrentSearchString = searchString;
 
             //Sorting
-            List<PersonResponse> sortedPersons = _personsService.GetSortedPersons(persons,sortBy,sortOrder);
+            List<PersonResponse> sortedPersons = _personsService.GetSortedPersons(persons, sortBy, sortOrder);
             ViewBag.CurrentSortBy = sortBy;
             ViewBag.CurrentSortOrder = sortOrder.ToString();
 
@@ -54,7 +55,12 @@ namespace CRUDExample.Controllers
         public IActionResult Create()
         {
             List<CountryResponse> countries = _countriesService.GetAllCountries();
-            ViewBag.Countries = countries;
+            ViewBag.Countries = countries.Select(temp =>
+            new SelectListItem()
+            {
+                Text = temp.CountryName,
+                Value = temp.CountryID.ToString()
+            });
             return View();
         }
 
@@ -64,17 +70,22 @@ namespace CRUDExample.Controllers
         [HttpPost]
         public IActionResult Create(PersonAddRequest request)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 List<CountryResponse> countries = _countriesService.GetAllCountries();
-                ViewBag.Countries = countries;
+                ViewBag.Countries = countries.Select(temp =>
+                    new SelectListItem()
+                    {
+                        Text = temp.CountryName,
+                        Value = temp.CountryID.ToString()
+                    });
                 ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
                 return View();
             }
             //calling service
             PersonResponse personResponse = _personsService.AddPerson(request);
             //navigate to Index(), after adding new person and it makes another get request to persons/index.
-            return RedirectToAction("Index","Persons");
+            return RedirectToAction("Index", "Persons");
         }
     }
 }
