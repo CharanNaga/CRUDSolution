@@ -22,7 +22,9 @@ namespace ServiceContracts.DTO
         public string? Email { get; set; }
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
+        [Required(ErrorMessage ="Please Select Gender of the Person")]
         public GenderOptions? Gender { get; set; }
+        [Required(ErrorMessage ="Please Select a Country")]
         public Guid? CountryID { get; set; }
         public string? Address { get; set; }
         public bool ReceiveNewsLetters { get; set; }
