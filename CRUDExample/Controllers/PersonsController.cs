@@ -87,5 +87,24 @@ namespace CRUDExample.Controllers
             //navigate to Index(), after adding new person and it makes another get request to persons/index.
             return RedirectToAction("Index", "Persons");
         }
+        [Route("[action]/{personID}")]
+        [HttpGet]
+        public IActionResult Edit(Guid personID)
+        {
+            PersonResponse? response = _personsService.GetPersonByPersonID(personID);
+            if(response == null)
+            {
+                return RedirectToAction("Index");
+            }
+            PersonUpdateRequest updateRequest =  response.ToPersonUpdateRequest();
+            List<CountryResponse> countries = _countriesService.GetAllCountries();
+            ViewBag.Countries = countries.Select(temp =>
+                new SelectListItem()
+                {
+                    Text = temp.CountryName,
+                    Value = temp.CountryID.ToString()
+                });
+            return View(updateRequest);
+        }
     }
 }
