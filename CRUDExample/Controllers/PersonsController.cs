@@ -106,5 +106,29 @@ namespace CRUDExample.Controllers
                 });
             return View(updateRequest);
         }
+        [Route("[action]/{personID}")]
+        [HttpPost]
+        public IActionResult Edit(PersonUpdateRequest updateRequest)
+        {
+            PersonResponse? response = _personsService.GetPersonByPersonID(updateRequest.PersonID);
+            if(response == null)
+            {
+                return RedirectToAction("Index");
+            }
+            if(!ModelState.IsValid) 
+            {
+                List<CountryResponse> countries = _countriesService.GetAllCountries();
+                ViewBag.Countries = countries.Select(temp =>
+                    new SelectListItem()
+                    {
+                        Text = temp.CountryName,
+                        Value = temp.CountryID.ToString()
+                    });
+                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return View();
+            }
+            PersonResponse updatePerson = _personsService.UpdatePerson(updateRequest);
+            return RedirectToAction("Index");
+        }
     }
 }
