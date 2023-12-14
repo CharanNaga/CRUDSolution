@@ -147,7 +147,7 @@ namespace Services
         private PersonResponse ConvertPersonToPersonResponse(Person person)
         {
             PersonResponse personResponse = person.ToPersonResponse();
-            personResponse.Country = _countriesService.GetCountryByCountryID(personResponse.CountryID)?.CountryName;
+            personResponse.Country = _countriesService.GetCountryByCountryID(person.CountryID)?.CountryName;
             return personResponse;
         }
         public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
