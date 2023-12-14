@@ -115,7 +115,12 @@ namespace CRUDExample.Controllers
             {
                 return RedirectToAction("Index");
             }
-            if(!ModelState.IsValid) 
+            if (ModelState.IsValid)
+            {
+                PersonResponse updatePerson = _personsService.UpdatePerson(updateRequest);
+                return RedirectToAction("Index","Persons");
+            }
+           else
             {
                 List<CountryResponse> countries = _countriesService.GetAllCountries();
                 ViewBag.Countries = countries.Select(temp =>
@@ -127,8 +132,7 @@ namespace CRUDExample.Controllers
                 ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
                 return View();
             }
-            PersonResponse updatePerson = _personsService.UpdatePerson(updateRequest);
-            return RedirectToAction("Index");
+            
         }
     }
 }
