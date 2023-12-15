@@ -23,7 +23,8 @@ namespace Services
         private PersonResponse ConvertPersonToPersonResponse(Person person)
         {
             PersonResponse personResponse = person.ToPersonResponse();
-            personResponse.Country = _countriesService.GetCountryByCountryID(person.CountryID)?.CountryName;
+            //personResponse.Country = _countriesService.GetCountryByCountryID(person.CountryID)?.CountryName;
+            personResponse.Country = person.Country?.CountryName; //using navigation property
             return personResponse;
         }
         public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
