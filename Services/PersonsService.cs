@@ -52,8 +52,12 @@ namespace Services
         {
             //Converts all persons from "Person" type to "PersonResponse" type.
             //Return all PersonResponse Objects.
-            return _db.Persons.ToList() //Converting linq to entities expression
-                .Select(p => ConvertPersonToPersonResponse(p)).ToList();
+
+            //return _db.Persons.ToList() //Converting linq to entities expression
+            //    .Select(p => ConvertPersonToPersonResponse(p)).ToList();
+
+            return _db.sp_GetAllPersons() //using stored procedures to avoid further errors
+               .Select(p => ConvertPersonToPersonResponse(p)).ToList();
         }
 
         public PersonResponse? GetPersonByPersonID(Guid? personID)
