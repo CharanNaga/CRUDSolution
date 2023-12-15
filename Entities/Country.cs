@@ -14,5 +14,6 @@ namespace Entities
         [Key]
         public Guid CountryID { get; set; } //By Guid, values are unlimited so app can scale up to any level. 
         public string? CountryName { get; set; }
+        public virtual ICollection<Person>? Persons { get; set;} //We can access all corresponding persons based on Country class's CountryID property
     }
 }
