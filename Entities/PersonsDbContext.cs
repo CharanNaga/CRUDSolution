@@ -39,5 +39,10 @@ namespace Entities
                 modelBuilder.Entity<Person>().HasData(person);
             }
         }
+        //Creating a method to call StoredProcedure
+        public List<Person> sp_GetAllPersons()
+        {
+            return Persons.FromSqlRaw("EXECUTE [dbo].[GetAllPersons]").ToList();
+        }
     }
 }
