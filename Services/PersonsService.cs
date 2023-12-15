@@ -41,8 +41,10 @@ namespace Services
             person.PersonID = Guid.NewGuid();
 
             //5. Then add it to the List<Person>
-            _db.Persons.Add(person);
-            _db.SaveChanges();
+            //_db.Persons.Add(person);
+            //_db.SaveChanges();
+
+            _db.sp_InsertPerson(person); //performing insertion using stored procedure
 
             //6. Return PersonResponse object with generated PersonID.
             return ConvertPersonToPersonResponse(person);  
