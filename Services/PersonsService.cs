@@ -20,13 +20,14 @@ namespace Services
         }
         //Helper method to convert Person to PersonResponse. We have every property except Country property in PersonResponse. 
         //So assigning the Country property with the CountryName property which is available from GetCountryByCountryID() from CountriesService.
-        private PersonResponse ConvertPersonToPersonResponse(Person person)
-        {
-            PersonResponse personResponse = person.ToPersonResponse();
-            //personResponse.Country = _countriesService.GetCountryByCountryID(person.CountryID)?.CountryName;
-            personResponse.Country = person.Country?.CountryName; //using navigation property
-            return personResponse;
-        }
+
+        //private PersonResponse ConvertPersonToPersonResponse(Person person)
+        //{
+        //    PersonResponse personResponse = person.ToPersonResponse();
+        //    //personResponse.Country = _countriesService.GetCountryByCountryID(person.CountryID)?.CountryName;
+        //    personResponse.Country = person.Country?.CountryName; //using navigation property
+        //    return personResponse;
+        //}
         public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
         {
             //1. Check personAddRequest != null
@@ -49,7 +50,8 @@ namespace Services
             //_db.sp_InsertPerson(person); //performing insertion using stored procedure
 
             //6. Return PersonResponse object with generated PersonID.
-            return ConvertPersonToPersonResponse(person);  
+            //return ConvertPersonToPersonResponse(person);  
+            return person.ToPersonResponse();  
         }
 
         public List<PersonResponse> GetAllPersons()
@@ -62,10 +64,12 @@ namespace Services
             //    .Select(p => ConvertPersonToPersonResponse(p)).ToList();
 
             return persons //By using navigation property so that we can access CountryID and CountryName properties like persons.Country.CountryName
-                .Select(p => ConvertPersonToPersonResponse(p)).ToList();
+                //.Select(p => ConvertPersonToPersonResponse(p)).ToList();
+                .Select(p => p.ToPersonResponse()).ToList();
 
             //return _db.sp_GetAllPersons() //using stored procedures to avoid further errors
             //   .Select(p => ConvertPersonToPersonResponse(p)).ToList();
+            //   .Select(p => p.ToPersonResponse()).ToList();
         }
 
         public PersonResponse? GetPersonByPersonID(Guid? personID)
@@ -82,7 +86,8 @@ namespace Services
             //4. Return PersonResponse Object
             if(personsFromList == null)
                 return null;
-            return ConvertPersonToPersonResponse(personsFromList);
+            //return ConvertPersonToPersonResponse(personsFromList);
+            return personsFromList.ToPersonResponse();
         }
 
         public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString)
@@ -237,7 +242,8 @@ namespace Services
 
             //6. Convert the Person object to PersonResponse object
             //7. Return PersonResponse object with updated details
-            return ConvertPersonToPersonResponse(matchingPerson);
+            //return ConvertPersonToPersonResponse(matchingPerson);
+            return matchingPerson.ToPersonResponse();
         }
 
         public bool DeletePerson(Guid? personID)
