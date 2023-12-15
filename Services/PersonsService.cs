@@ -41,10 +41,10 @@ namespace Services
             person.PersonID = Guid.NewGuid();
 
             //5. Then add it to the List<Person>
-            //_db.Persons.Add(person);
-            //_db.SaveChanges();
+            _db.Persons.Add(person);
+            _db.SaveChanges();
 
-            _db.sp_InsertPerson(person); //performing insertion using stored procedure
+            //_db.sp_InsertPerson(person); //performing insertion using stored procedure
 
             //6. Return PersonResponse object with generated PersonID.
             return ConvertPersonToPersonResponse(person);  
@@ -55,11 +55,11 @@ namespace Services
             //Converts all persons from "Person" type to "PersonResponse" type.
             //Return all PersonResponse Objects.
 
-            //return _db.Persons.ToList() //Converting linq to entities expression
-            //    .Select(p => ConvertPersonToPersonResponse(p)).ToList();
+            return _db.Persons.ToList() //Converting linq to entities expression
+                .Select(p => ConvertPersonToPersonResponse(p)).ToList();
 
-            return _db.sp_GetAllPersons() //using stored procedures to avoid further errors
-               .Select(p => ConvertPersonToPersonResponse(p)).ToList();
+            //return _db.sp_GetAllPersons() //using stored procedures to avoid further errors
+            //   .Select(p => ConvertPersonToPersonResponse(p)).ToList();
         }
 
         public PersonResponse? GetPersonByPersonID(Guid? personID)
