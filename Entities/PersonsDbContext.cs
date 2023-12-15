@@ -39,6 +39,12 @@ namespace Entities
             {
                 modelBuilder.Entity<Person>().HasData(person);
             }
+
+            //Using Fluent API to set Column Name, DataType & Default Value for any property in a table
+            modelBuilder.Entity<Person>().Property(p => p.TIN)
+                .HasColumnName("TaxIdentificationNumber")
+                .HasColumnType("varchar(8)")
+                .HasDefaultValue("ABC12345");
         }
         //Creating a method to call GetAllPersons StoredProcedure
         public List<Person> sp_GetAllPersons()
