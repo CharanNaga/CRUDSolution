@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Entities
@@ -18,6 +19,22 @@ namespace Entities
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Country>().ToTable("Countries");
             modelBuilder.Entity<Person>().ToTable("Persons");
+
+            //Seed to countries
+            string countriesJson = File.ReadAllText("countries.json");
+            List<Country> countries = JsonSerializer.Deserialize<List<Country>>(countriesJson);
+            foreach(var country in countries)
+            {
+                modelBuilder.Entity<Country>().HasData(country);
+            }
+
+            //Seed to persons
+            string personsJson = File.ReadAllText("persons.json");
+            List<Person> persons = JsonSerializer.Deserialize<List<Person>>(personsJson);
+            foreach (var person in persons)
+            {
+                modelBuilder.Entity<Person>().HasData(person);
+            }
         }
     }
 }
