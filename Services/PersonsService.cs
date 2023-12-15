@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -52,10 +53,14 @@ namespace Services
 
         public List<PersonResponse> GetAllPersons()
         {
+            var persons = _db.Persons.Include("Country").ToList(); //Using Include() to Make use of Navigation Property
             //Converts all persons from "Person" type to "PersonResponse" type.
             //Return all PersonResponse Objects.
 
-            return _db.Persons.ToList() //Converting linq to entities expression
+            //return _db.Persons.ToList() //Converting linq to entities expression
+            //    .Select(p => ConvertPersonToPersonResponse(p)).ToList();
+
+            return persons //By using navigation property so that we can access CountryID and CountryName properties like persons.Country.CountryName
                 .Select(p => ConvertPersonToPersonResponse(p)).ToList();
 
             //return _db.sp_GetAllPersons() //using stored procedures to avoid further errors
@@ -69,7 +74,8 @@ namespace Services
                 return null;
 
             //2. Get matching person from List<Person> based on personID
-            Person? personsFromList = _db.Persons.FirstOrDefault(p=>p.PersonID == personID);
+            //Person? personsFromList = _db.Persons.FirstOrDefault(p=>p.PersonID == personID);
+            Person? personsFromList = _db.Persons.Include("Country").FirstOrDefault(p=>p.PersonID == personID);
 
             //3. Convert matching person object from Person to PersonResponse type
             //4. Return PersonResponse Object
