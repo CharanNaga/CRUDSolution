@@ -31,6 +31,6 @@ namespace Entities
         public bool ReceiveNewsLetters { get; set; }
         public string? TIN { get; set; }
         [ForeignKey("CountryID")]
-        public Country? Country { get; set; }
+        public virtual Country? Country { get; set; }
     }
 }
