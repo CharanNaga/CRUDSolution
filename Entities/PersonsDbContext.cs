@@ -49,6 +49,15 @@ namespace Entities
             //Some more settings adding to a property
             //modelBuilder.Entity<Person>().HasIndex(p => p.TIN).IsUnique();
             modelBuilder.Entity<Person>().HasCheckConstraint("CHK_TIN", "len([TaxIdentificationNumber])=8");
+
+            //Table relations with Fluent API
+            //modelBuilder.Entity<Person>(entity => //Every Country has set of Persons.
+            //{
+            //    entity.HasOne<Country>(c => c.Country) //Country property here is from Person Model Class
+            //    .WithMany(p => p.Persons) //Persons Property here is from Country Model Class
+            //    .HasForeignKey(p => p.PersonID);
+            //});
+            //Instead of doing above, simply mention [ForeignKey("CountryID")] on Country Property in Person.cs
         }
         //Creating a method to call GetAllPersons StoredProcedure
         public List<Person> sp_GetAllPersons()
