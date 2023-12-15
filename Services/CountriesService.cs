@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 
@@ -11,7 +12,7 @@ namespace Services
         {
             _db = db;
         }
-        public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
+        public async Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest)
         {
             //1. Check whether countryAddRequest != null
             if(countryAddRequest == null)
@@ -23,7 +24,7 @@ namespace Services
                 throw new ArgumentException(nameof(countryAddRequest.CountryName));
 
             //CountryName can't be duplicated.
-            if (_db.Countries.Count(c=>c.CountryName == countryAddRequest.CountryName) > 0)
+            if (await _db.Countries.CountAsync(c=>c.CountryName == countryAddRequest.CountryName) > 0)
                 throw new ArgumentException("Country Name already existed");
 
             //3. Convert countryAddRequest from CountryAddRequest type to Country type.
@@ -34,27 +35,27 @@ namespace Services
 
             //5. Add to List<Country>
             _db.Countries.Add(country);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             //6. Return CountryResponse object with generated CountryID.
             return country.ToCountryResponse();
         }
 
-        public List<CountryResponse> GetAllCountries()
+        public async Task<List<CountryResponse>> GetAllCountries()
         {
             //Converts all Countries from "Country" type to "CountryResponse" type.
             //Return all CountryResponse Objects.
-            return _db.Countries.Select(c => c.ToCountryResponse()).ToList();
+            return await _db.Countries.Select(c => c.ToCountryResponse()).ToListAsync();
         }
 
-        public CountryResponse? GetCountryByCountryID(Guid? countryID)
+        public async Task<CountryResponse?> GetCountryByCountryID(Guid? countryID)
         {
             //1. Check countryID != null
             if (countryID == null)
                 return null;
 
             //2. Get Matching Country from List<Country> based countryID
-            Country? countryFromList = _db.Countries.FirstOrDefault(c=>c.CountryID == countryID);
+            Country? countryFromList = await _db.Countries.FirstOrDefaultAsync(c=>c.CountryID == countryID);
 
 
             //3. Convert matching country object from Country to CountryResponse
