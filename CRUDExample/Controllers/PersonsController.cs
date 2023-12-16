@@ -169,5 +169,11 @@ namespace CRUDExample.Controllers
                 PageOrientation = Orientation.Landscape,
             };
         }
+        [Route("PersonsCSV")]
+        public async Task<IActionResult> PersonsCSV()
+        {
+            MemoryStream stream = await _personsService.GetPersonsCSV();
+            return File(stream, "application/octet-stream", "persons.csv");
+        }
     }
 }
