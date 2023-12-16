@@ -1,10 +1,12 @@
-﻿using Entities;
+﻿using CsvHelper;
+using Entities;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services.Helpers;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace Services
 {
@@ -265,6 +267,29 @@ namespace Services
 
             //5. Return boolean value indicating person object was deleted or not
             return true;
+        }
+
+        public async Task<MemoryStream> GetPersonsCSV()
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            StreamWriter streamWriter = new StreamWriter(memoryStream);
+
+            //Passing Writer obj, Language to identify the ".", "," symbols and leaveOpen parameter to CsvWriter constructor 
+            CsvWriter csvWriter = new CsvWriter(streamWriter,CultureInfo.InvariantCulture,leaveOpen:true);
+            
+            //writing headers using Generic of type PersonResponse to WriteHeader() of CsvWriter class.
+            csvWriter.WriteHeader<PersonResponse>(); //PersonID,PersonName,Email,DOB,....
+
+            //moving to next record for writing next set of data
+            csvWriter.NextRecord();
+
+            //Retrieving list of persons, and passing the same list obj to the WriteRecords() for writing data
+            List<PersonResponse> persons = _db.Persons.Include("Country").Select(p => p.ToPersonResponse()).ToList();
+            await csvWriter.WriteRecordsAsync(persons); //1,abc,....
+
+            //Setting memory stream position to Zero, for writing new data & then returning memorystream
+            memoryStream.Position = 0;
+            return memoryStream;
         }
     }
 }
