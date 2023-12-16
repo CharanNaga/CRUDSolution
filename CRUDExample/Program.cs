@@ -1,5 +1,6 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using Rotativa.AspNetCore;
 using ServiceContracts;
 using Services;
 
@@ -28,6 +29,9 @@ var app = builder.Build();
 
 if(app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
+
+//Configuring wkhtmltopdf file path here to identify the PDF file
+RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
 app.UseStaticFiles();
 app.UseRouting();
