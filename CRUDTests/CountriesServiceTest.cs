@@ -3,6 +3,7 @@ using ServiceContracts.DTO;
 using Entities;
 using Services;
 using Microsoft.EntityFrameworkCore;
+using EntityFrameworkCoreMock;
 
 namespace CRUDTests
 {
@@ -13,10 +14,19 @@ namespace CRUDTests
         //constructor
         public CountriesServiceTest()
         {
-            _countriesService = new CountriesService(
-                new ApplicationDbContext(
+            //Creating empty countries list to test.
+            var initialCountriesList = new List<Country>() {};
+
+            //Mocking the ApplicationDbContext into a Mocked Dbcontext
+            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(new ApplicationDbContext(
                     new DbContextOptionsBuilder<ApplicationDbContext>().Options
                     ));
+
+            //Making use of Mocked DbContext as an application dbcontext, so that it doesn't involve interacting with the files or databases. (isolation constraint of tests)
+            var dbContext = dbContextMock.Object;
+
+            //passing the same mocked dbcontext options to the Service constructor so that services receive this mocked dbcontext, which performs dummy implementation.
+            _countriesService = new CountriesService(dbContext);
         }
         #region AddCountry
         //Four Requirements for Test..
