@@ -430,102 +430,91 @@ namespace CRUDTests
         #region UpdatePerson
         //1. When PersonUpdateRequest is null, throw ArgumentNullException
         [Fact]
-        public async Task UpdatePerson_NullPerson()
+        public async Task UpdatePerson_NullPerson_ToBeArgumentNullException()
         {
             //Arrange
             PersonUpdateRequest? personUpdateRequest = null;
 
             //Assert
-            //await Assert.ThrowsAsync<ArgumentNullException>(async() => {
-            //    //Act
-            //    await _personsService.UpdatePerson(personUpdateRequest);
-            //});
             Func<Task> action = async () =>
             {
                 await _personsService.UpdatePerson(personUpdateRequest);
             };
+            //Assert
             await action.Should().ThrowAsync<ArgumentNullException>();
         }
 
         //2. If PersonID is invalid, throw ArgumentException
         [Fact]
-        public async Task UpdatePerson_InvalidPersonID()
+        public async Task UpdatePerson_InvalidPersonID_ToBeArgumentException()
         {
             //Arrange
             PersonUpdateRequest? personUpdateRequest = _fixture.Build<PersonUpdateRequest>()
                 .Create();
-
-            ////Assert
-            //await Assert.ThrowsAsync<ArgumentException>(async() => {
-            //    //Act
-            //    await _personsService.UpdatePerson(personUpdateRequest);
-            //});
+           //Act 
             Func<Task> action = async () =>
             {
                 await _personsService.UpdatePerson(personUpdateRequest);
             };
+            //Assert
             await action.Should().ThrowAsync<ArgumentException>();
         }
 
         //3. When PersonName is null, throw ArgumentException
         [Fact]
-        public async Task UpdatePerson_PersonNameIsNull()
+        public async Task UpdatePerson_PersonNameIsNull_ToBeArgumentException()
         {
-            CountryAddRequest countryAddRequest = _fixture.Create<CountryAddRequest>();
-
-            CountryResponse countryResponse = await _countriesService.AddCountry(countryAddRequest);
-
-            PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.PersonName, "Harish")
+            //Arrange
+            Person person = _fixture.Build<Person>()
+                .With(temp => temp.PersonName, null as string)
                 .With(temp => temp.Email, "test@example.com")
-                .With(temp => temp.CountryID, countryResponse.CountryID)
+                .With(temp => temp.Gender,"Male")
+                .With(temp => temp.Country, null as Country)
                 .Create();
 
-            PersonResponse personResponseFromAdd = await _personsService.AddPerson(personAddRequest);
+            PersonResponse personResponseFromAdd = person.ToPersonResponse();
 
             PersonUpdateRequest personUpdateRequest = personResponseFromAdd.ToPersonUpdateRequest();
-            personUpdateRequest.PersonName = null;
-
-            //Assert
-            //await Assert.ThrowsAsync<ArgumentException>(async() => {
-            //    //Act
-            //    await _personsService.UpdatePerson(personUpdateRequest);
-            //});
+            //Act
             Func<Task> action = async () =>
             {
                 await _personsService.UpdatePerson(personUpdateRequest);
             };
+            //Assert
             await action.Should().ThrowAsync<ArgumentException>();
         }
 
         //4. When Proper Person Details are given, update the PersonResponse Object
         //First, add a new person and try to update the person name and email
         [Fact]
-        public async Task UpdatePerson_PersonFullDetailsUpdation()
+        public async Task UpdatePerson_PersonFullDetails_ToBeSuccessful()
         {
             //Arrange
-            CountryAddRequest countryAddRequest = _fixture.Create<CountryAddRequest>();
-
-            CountryResponse countryResponse = await _countriesService.AddCountry(countryAddRequest);
-
-            PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.PersonName, "Harish")
+            Person person = _fixture.Build<Person>()
                 .With(temp => temp.Email, "test@example.com")
-                .With(temp => temp.CountryID, countryResponse.CountryID)
+                .With(temp => temp.Gender, "Male")
+                .With(temp => temp.Country, null as Country)
                 .Create();
-            PersonResponse personResponseFromAdd = await _personsService.AddPerson(personAddRequest);
+            PersonResponse personResponseExpected = person.ToPersonResponse();
 
-            PersonUpdateRequest personUpdateRequest = personResponseFromAdd.ToPersonUpdateRequest();
-            personUpdateRequest.PersonName = "William";
-            personUpdateRequest.Email = "william@gmail.com";
+            PersonUpdateRequest personUpdateRequest = personResponseExpected.ToPersonUpdateRequest();
+
+            //mocking UpdatePerson()
+            _personsRepositoryMock.Setup(
+                temp => temp.UpdatePerson(It.IsAny<Person>()))
+                .ReturnsAsync(person);
+
+            //mocking GetPersonByPersonID() as all the methods that are being called in the service must be mocked before making a call.
+            _personsRepositoryMock.Setup(
+                temp => temp.GetPersonByPersonID(It.IsAny<Guid>()))
+                .ReturnsAsync(person);
 
             //Act
             PersonResponse personResponseFromUpdate = await _personsService.UpdatePerson(personUpdateRequest);
-            PersonResponse? personResponseFromGet = await _personsService.GetPersonByPersonID(personUpdateRequest.PersonID);
 
             //Assert
             //Assert.Equal(personResponseFromGet,personResponseFromUpdate);
-            personResponseFromUpdate.Should().Be(personResponseFromGet);
+            personResponseFromUpdate.Should().Be(personResponseExpected);
         }
         #endregion
 
