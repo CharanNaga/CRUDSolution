@@ -3,6 +3,8 @@ using Entities;
 using EntityFrameworkCoreMock;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using RepositoryContracts;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -16,6 +18,10 @@ namespace CRUDTests
         //private field
         private readonly IPersonsService _personsService;
         private readonly ICountriesService _countriesService;
+
+        private readonly IPersonsRepository _personsRepository;
+        private readonly Mock<IPersonsRepository> _personsRepositoryMock;
+
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly IFixture _fixture; //TO work with autofixture
 
@@ -23,6 +29,8 @@ namespace CRUDTests
         public PersonsServiceTest(ITestOutputHelper testOutputHelper)
         {
             _fixture = new Fixture(); //creating obj of Fixture class to generate fake data.
+            _personsRepositoryMock = new Mock<IPersonsRepository>(); //to provide dummy implementation of methods, using which we can mock any methods
+            _personsRepository = _personsRepositoryMock.Object;
 
             //Creating empty persons list to test.
             var initialCountriesList = new List<Country>() { };
@@ -40,20 +48,11 @@ namespace CRUDTests
             dbContextMock.CreateDbSetMock(temp => temp.Countries, initialCountriesList);
             dbContextMock.CreateDbSetMock(temp => temp.Persons, initialPersonsList);
 
-            //_countriesService = new CountriesService(
-            //    new ApplicationDbContext(
-            //        new DbContextOptionsBuilder<ApplicationDbContext>().Options
-            //        ));
-            //_personsService = new PersonsService(
-            //     new ApplicationDbContext(
-            //        new DbContextOptionsBuilder<ApplicationDbContext>().Options
-            //        ),_countriesService);
-
             //_countriesService = new CountriesService(dbContext);
             _countriesService = new CountriesService(null);
 
             //_personsService = new PersonsService(dbContext,_countriesService);
-            _personsService = new PersonsService(null);
+            _personsService = new PersonsService(_personsRepository);
             _testOutputHelper = testOutputHelper;
         }
 
@@ -61,7 +60,7 @@ namespace CRUDTests
         //Three criteria..
         //1. When PersonAddRequest is null, throw ArgumentNullException
         [Fact]
-        public async Task AddPerson_NullPerson()
+        public async Task AddPerson_NullPerson_ToBeArgumentNullException()
         {
             //Arrange
             PersonAddRequest? request = null;
@@ -84,13 +83,17 @@ namespace CRUDTests
 
         //2. When PersonName is null, throw ArgumentException
         [Fact]
-        public async Task AddPerson_PersonNameIsNull()
+        public async Task AddPerson_PersonNameIsNull_ToBeArgumentException()
         {
             //Arrange
             //PersonAddRequest request = new PersonAddRequest() { PersonName = null };
             PersonAddRequest request = _fixture.Build<PersonAddRequest>()
                 .With(temp=>temp.PersonName, null as string)
                 .Create();
+            Person person = request.ToPerson();
+            //mocking repository
+            _personsRepositoryMock.Setup(temp => temp.AddPerson(It.IsAny<Person>())).ReturnsAsync(person);
+
             ////Assert
             //await Assert.ThrowsAsync<ArgumentException>(async() =>
             //{
@@ -110,7 +113,7 @@ namespace CRUDTests
 
         //3. When Proper person details are provided, insert into the existing list of persons and it should return an object of PersonResponse class with newly generated PersonID.
         [Fact]
-        public async Task AddPerson_ProperPersonDetails()
+        public async Task AddPerson_FullPersonDetails_ToBeSuccessful()
         {
             //Arrange
             //PersonAddRequest personAddRequest = _fixture.Create<PersonAddRequest>(); //create method initializes all properties with some default values
@@ -120,17 +123,29 @@ namespace CRUDTests
                 .With(temp=>temp.Email,"fakemail@example.com")
                 .Create();
 
+            Person person = personAddRequest.ToPerson();
+            PersonResponse personResponseExpected = person.ToPersonResponse();
+
+            //If we supply any argument value to AddPerson(), it should return same return value
+            //We will mock all the repository methods, which are being called as a part of corresponding service method.
+            _personsRepositoryMock.Setup(
+                temp => temp.AddPerson(
+                    It.IsAny<Person>() //Argument Data type
+                    )).ReturnsAsync(person); //Return Data type
+
             //Act
-            PersonResponse personResponse = await _personsService.AddPerson(personAddRequest);
-            List<PersonResponse> personResponseList = await _personsService.GetAllPersons();
+            PersonResponse personResponseFromAddPerson = await _personsService.AddPerson(personAddRequest);
+            //List<PersonResponse> personResponseList = await _personsService.GetAllPersons();
+            personResponseExpected.PersonID = personResponseFromAddPerson.PersonID;
 
             //Assert
 
-            //Assert.True(personResponse.PersonID != Guid.Empty);
-            personResponse.PersonID.Should().NotBe(Guid.Empty);
+            //Assert.True(personResponseFromAddPerson.PersonID != Guid.Empty);
 
-            //Assert.Contains(personResponse, personResponseList);
-            personResponseList.Should().Contain(personResponse);
+            personResponseFromAddPerson.PersonID.Should().NotBe(Guid.Empty);
+            //Assert.Contains(personResponseFromAddPerson, personResponseList);
+            //personResponseList.Should().Contain(personResponseFromAddPerson);
+
         }
         #endregion
 
