@@ -521,24 +521,29 @@ namespace CRUDTests
         #region DeletePerson
         //1. When valid PersonID provided, return true
         [Fact]
-        public async Task DeletePerson_ValidPersonID()
+        public async Task DeletePerson_ValidPersonID_ToBeSuccessful()
         {
-            CountryAddRequest countryAddRequest = _fixture.Create<CountryAddRequest>();
-
-            CountryResponse countryResponse = await _countriesService.AddCountry(countryAddRequest);
-
-            PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>()
+            //Arrange
+            Person person = _fixture.Build<Person>()
                 .With(temp => temp.PersonName, "Harish")
                 .With(temp => temp.Email, "test@example.com")
-                .With(temp => temp.CountryID, countryResponse.CountryID)
+                .With(temp => temp.Gender, "Male")
+                .With(temp => temp.Country, null as Country)
                 .Create();
-            PersonResponse personResponseFromAdd = await _personsService.AddPerson(personAddRequest);
+
+            //mocking DeletePersonByPersonID()
+            _personsRepositoryMock.Setup(
+                temp => temp.DeletePersonByPersonID(It.IsAny<Guid>()))
+                .ReturnsAsync(true);
+
+            //mocking GetPersonsByPersonID()
+            _personsRepositoryMock.Setup(
+                temp => temp.GetPersonByPersonID(It.IsAny<Guid>()))
+                .ReturnsAsync(person);
 
             //Act
-            bool isDeleted = await _personsService.DeletePerson(personResponseFromAdd.PersonID);
-
+            bool isDeleted = await _personsService.DeletePerson(person.PersonID);
             //Assert 
-            //Assert.True(isDeleted);
             isDeleted.Should().BeTrue();
         }
 
