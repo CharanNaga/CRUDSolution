@@ -18,9 +18,9 @@ namespace CRUDTests
             var initialCountriesList = new List<Country>() {};
 
             //Mocking the ApplicationDbContext into a Mocked Dbcontext
-            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(new ApplicationDbContext(
+            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
                     new DbContextOptionsBuilder<ApplicationDbContext>().Options
-                    ));
+                    );
 
             //Making use of Mocked DbContext as an application dbcontext, so that it doesn't involve interacting with the files or databases. (isolation constraint of tests)
             var dbContext = dbContextMock.Object;
