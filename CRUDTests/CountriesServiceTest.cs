@@ -6,36 +6,25 @@ using Microsoft.EntityFrameworkCore;
 using EntityFrameworkCoreMock;
 using AutoFixture;
 using FluentAssertions;
+using Moq;
+using RepositoryContracts;
 
 namespace CRUDTests
 {
     public class CountriesServiceTest
     {
         private readonly ICountriesService _countriesService;
+        private readonly ICountriesRepository _countriesRepository;
+        private readonly Mock<ICountriesRepository> _countriesRepositoryMock;
         private readonly IFixture _fixture;
 
         //constructor
         public CountriesServiceTest()
         {
             _fixture = new Fixture();
-
-            //Creating empty countries list to test.
-            var initialCountriesList = new List<Country>() {};
-
-            //Mocking the ApplicationDbContext into a Mocked Dbcontext
-            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
-                    new DbContextOptionsBuilder<ApplicationDbContext>().Options
-                    );
-
-            //Making use of Mocked DbContext as an application dbcontext, so that it doesn't involve interacting with the files or databases. (isolation constraint of tests)
-            var dbContext = dbContextMock.Object;
-
-            //creating MockedDbSet for the Country Table with the empty seeded countries list
-            dbContextMock.CreateDbSetMock(temp => temp.Countries, initialCountriesList);
-
-            //passing the same mocked dbcontext options to the Service constructor so that services receive this mocked dbcontext, which performs dummy implementation.
-            //_countriesService = new CountriesService(dbContext);
-            _countriesService = new CountriesService(null);
+            _countriesRepositoryMock = new Mock<ICountriesRepository>();
+            _countriesRepository = _countriesRepositoryMock.Object;
+            _countriesService = new CountriesService(_countriesRepository);
         }
         #region AddCountry
         //Four Requirements for Test..
