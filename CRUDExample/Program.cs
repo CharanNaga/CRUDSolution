@@ -1,5 +1,7 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using Repositories;
+using RepositoryContracts;
 using Rotativa.AspNetCore;
 using ServiceContracts;
 using Services;
@@ -14,6 +16,8 @@ builder.Services.AddControllersWithViews();
 //After we change all the methods in service methods to perform operations with datastore (from in-memory collections to Database),
 //we'll get an error saying can't consume scoped service( entities) from singleton service(services class).
 //so, we'llconvert the lifetimes of Countries & Persons Services to Scoped Service Lifetime.
+builder.Services.AddScoped<ICountriesRepository,CountriesRepository>();
+builder.Services.AddScoped<IPersonsRepository,PersonsRepository>();
 
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IPersonsService, PersonsService>();
