@@ -9,6 +9,7 @@ using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
+using System.Linq.Expressions;
 using Xunit.Abstractions;
 
 namespace CRUDTests
@@ -274,38 +275,43 @@ namespace CRUDTests
 
         //1. If empty string is provided as an argument and search by person name, return all persons.
         [Fact]
-        public async Task GetFilteredPersons_EmptySearchText()
+        public async Task GetFilteredPersons_EmptySearchText_ToBeSuccessful()
         {
             //Arrange
-            CountryAddRequest countryAddRequest1 = _fixture.Create<CountryAddRequest>();
-            CountryAddRequest countryAddRequest2 = _fixture.Create<CountryAddRequest>();
-
-            CountryResponse countryResponse1 = await _countriesService.AddCountry(countryAddRequest1);
-            CountryResponse countryResponse2 = await _countriesService.AddCountry(countryAddRequest2);
-
-            PersonAddRequest personAddRequest1 = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.Email, "test1@example.com")
-                .Create();
-
-            PersonAddRequest personAddRequest2 = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.Email, "test2@example.com")
-                .Create();
-
-            List<PersonAddRequest> personAddRequests = new List<PersonAddRequest>() { personAddRequest1, personAddRequest2 };
-
-            //Act
-            List<PersonResponse> personsListFromAddPerson = new List<PersonResponse>();
-            foreach (PersonAddRequest personRequest in personAddRequests) //as AddPerson return type is PersonResponse. We initialize an empty list of PersonResponse type and will add the persons from request into the response list.
+            List<Person> persons = new List<Person>()
             {
-                personsListFromAddPerson.Add(await _personsService.AddPerson(personRequest));
-            }
-            //print personListFromAddPerson
+                _fixture.Build<Person>()
+                .With(temp => temp.Email, "test1@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+
+                 _fixture.Build<Person>()
+                .With(temp => temp.Email, "test2@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+
+                  _fixture.Build<Person>()
+                .With(temp => temp.Email, "test3@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+            };
+
+            List<PersonResponse> personsListFromAddPersonExpected = persons.Select(temp => temp.ToPersonResponse()).ToList();       
+            
+            //print personListFromAddPersonExpected
             _testOutputHelper.WriteLine("Expected: ");
-            foreach (PersonResponse personResponse in personsListFromAddPerson)
+            foreach (PersonResponse personResponse in personsListFromAddPersonExpected)
             {
                 _testOutputHelper.WriteLine(personResponse.ToString());
             }
 
+            //mocking GetFilteredPersons()
+            _personsRepositoryMock.Setup(
+                temp=>temp.GetFilteredPersons(
+                    It.IsAny<Expression<Func<Person,bool>>>()))
+                .ReturnsAsync(persons);
+
+            //Act
             List<PersonResponse> actualPersonsListFromGetFilteredPerson = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "");
 
             //print actualPersonsListFromAddPerson
@@ -314,60 +320,49 @@ namespace CRUDTests
             {
                 _testOutputHelper.WriteLine(personResponse.ToString());
             }
-
-            //read each element from personsListFromAddPerson
-            //foreach (PersonResponse expectedPerson in personsListFromAddPerson)
-            //{
-            //    //Assert
-            //    Assert.Contains(expectedPerson, actualPersonsListFromGetFilteredPerson);
-            //}
-            actualPersonsListFromGetFilteredPerson.Should().BeEquivalentTo(personsListFromAddPerson);
+            //Assert
+            actualPersonsListFromGetFilteredPerson.Should().BeEquivalentTo(personsListFromAddPersonExpected);
         }
 
         //2. If text string is provided as an argument and search by person name, return matching persons.
         [Fact]
-        public async Task GetFilteredPersons_SearchByPersonName()
+        public async Task GetFilteredPersons_SearchByPersonName_ToBeSuccessful()
         {
             //Arrange
-            CountryAddRequest countryAddRequest1 = _fixture.Create<CountryAddRequest>();
-            CountryAddRequest countryAddRequest2 = _fixture.Create<CountryAddRequest>();
-
-            CountryResponse countryResponse1 = await _countriesService.AddCountry(countryAddRequest1);
-            CountryResponse countryResponse2 = await _countriesService.AddCountry(countryAddRequest2);
-
-            PersonAddRequest personAddRequest1 = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.PersonName, "Harish")
-                .With(temp => temp.Email, "test1@example.com")
-                .With(temp => temp.CountryID, countryResponse1.CountryID)
-                .Create();
-
-            PersonAddRequest personAddRequest2 = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.PersonName, "Charan")
-                .With(temp => temp.Email, "test2@example.com")
-                .With(temp => temp.CountryID, countryResponse2.CountryID)
-                .Create();
-
-            PersonAddRequest personAddRequest3 = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.PersonName, "Mary")
-                .With(temp => temp.Email, "test3@example.com")
-                .With(temp => temp.CountryID, countryResponse2.CountryID)
-                .Create();
-
-            List<PersonAddRequest> personAddRequests = new List<PersonAddRequest>() { personAddRequest1, personAddRequest2, personAddRequest3 };
-
-            //Act
-            List<PersonResponse> personsListFromAddPerson = new List<PersonResponse>();
-            foreach (PersonAddRequest personRequest in personAddRequests) //as AddPerson return type is PersonResponse. We initialize an empty list of PersonResponse type and will add the persons from request into the response list.
+            List<Person> persons = new List<Person>()
             {
-                personsListFromAddPerson.Add(await _personsService.AddPerson(personRequest));
-            }
-            //print personListFromAddPerson
+                _fixture.Build<Person>()
+                .With(temp => temp.Email, "test1@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+
+                 _fixture.Build<Person>()
+                .With(temp => temp.Email, "test2@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+
+                  _fixture.Build<Person>()
+                .With(temp => temp.Email, "test3@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+            };
+
+            List<PersonResponse> personsListFromAddPersonExpected = persons.Select(temp => temp.ToPersonResponse()).ToList();
+
+            //print personListFromAddPersonExpected
             _testOutputHelper.WriteLine("Expected: ");
-            foreach (PersonResponse personResponse in personsListFromAddPerson)
+            foreach (PersonResponse personResponse in personsListFromAddPersonExpected)
             {
                 _testOutputHelper.WriteLine(personResponse.ToString());
             }
 
+            //mocking GetFilteredPersons()
+            _personsRepositoryMock.Setup(
+                temp => temp.GetFilteredPersons(
+                    It.IsAny<Expression<Func<Person, bool>>>()))
+                .ReturnsAsync(persons);
+
+            //Act
             List<PersonResponse> actualPersonsListFromGetFilteredPerson = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "ha");
 
             //print actualPersonsListFromAddPerson
@@ -376,22 +371,8 @@ namespace CRUDTests
             {
                 _testOutputHelper.WriteLine(personResponse.ToString());
             }
-
-            //read each element from personsListFromAddPerson
-            //foreach (PersonResponse expectedPerson in personsListFromAddPerson)
-            //{
-            //    if(expectedPerson.PersonName!=null)
-            //    {
-            //        if (expectedPerson.PersonName.Contains("ha", StringComparison.OrdinalIgnoreCase))
-            //        {
-            //            //Assert
-            //            Assert.Contains(expectedPerson, actualPersonsListFromGetFilteredPerson);
-            //        }
-            //    }
-            //}
-            actualPersonsListFromGetFilteredPerson.Should().OnlyContain(temp =>
-                temp.PersonName.Contains("ha", StringComparison.OrdinalIgnoreCase)
-            );
+            //Assert
+            actualPersonsListFromGetFilteredPerson.Should().BeEquivalentTo(personsListFromAddPersonExpected);
         }
         #endregion
 
