@@ -49,8 +49,11 @@ namespace CRUDTests
             //        new DbContextOptionsBuilder<ApplicationDbContext>().Options
             //        ),_countriesService);
 
-            _countriesService = new CountriesService(dbContext);
-            _personsService = new PersonsService(dbContext,_countriesService);
+            //_countriesService = new CountriesService(dbContext);
+            _countriesService = new CountriesService(null);
+
+            //_personsService = new PersonsService(dbContext,_countriesService);
+            _personsService = new PersonsService(null);
             _testOutputHelper = testOutputHelper;
         }
 

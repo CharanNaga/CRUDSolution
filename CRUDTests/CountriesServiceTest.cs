@@ -34,7 +34,8 @@ namespace CRUDTests
             dbContextMock.CreateDbSetMock(temp => temp.Countries, initialCountriesList);
 
             //passing the same mocked dbcontext options to the Service constructor so that services receive this mocked dbcontext, which performs dummy implementation.
-            _countriesService = new CountriesService(dbContext);
+            //_countriesService = new CountriesService(dbContext);
+            _countriesService = new CountriesService(null);
         }
         #region AddCountry
         //Four Requirements for Test..
