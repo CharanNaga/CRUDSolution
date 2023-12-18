@@ -379,48 +379,42 @@ namespace CRUDTests
         #region GetSortedPersons
         //1. when we sort based on PersonName in DESC, return persons list in DESC order on PersonName.
         [Fact]
-        public async Task GetSortedPersons()
+        public async Task GetSortedPersons_ToBeSuccessful()
         {
-            CountryAddRequest countryAddRequest1 = _fixture.Create<CountryAddRequest>();
-            CountryAddRequest countryAddRequest2 = _fixture.Create<CountryAddRequest>();
-
-            CountryResponse countryResponse1 = await _countriesService.AddCountry(countryAddRequest1);
-            CountryResponse countryResponse2 = await _countriesService.AddCountry(countryAddRequest2);
-
-            PersonAddRequest personAddRequest1 = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.PersonName, "Harish")
-                .With(temp => temp.Email, "test1@example.com")
-                .With(temp => temp.CountryID, countryResponse1.CountryID)
-                .Create();
-
-            PersonAddRequest personAddRequest2 = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.PersonName, "Charan")
-                .With(temp => temp.Email, "test2@example.com")
-                .With(temp => temp.CountryID, countryResponse2.CountryID)
-                .Create();
-
-            PersonAddRequest personAddRequest3 = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.PersonName, "Mary")
-                .With(temp => temp.Email, "test3@example.com")
-                .With(temp => temp.CountryID, countryResponse2.CountryID)
-                .Create();
-
-            List<PersonAddRequest> personAddRequests = new List<PersonAddRequest>() { personAddRequest1, personAddRequest2, personAddRequest3 };
-
-            //Act
-            List<PersonResponse> personsListFromAddPerson = new List<PersonResponse>();
-            foreach (PersonAddRequest personRequest in personAddRequests) //as AddPerson return type is PersonResponse. We initialize an empty list of PersonResponse type and will add the persons from request into the response list.
+            //Arrange
+            List<Person> persons = new List<Person>()
             {
-                personsListFromAddPerson.Add(await _personsService.AddPerson(personRequest));
-            }
+                _fixture.Build<Person>()
+                .With(temp => temp.Email, "test1@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+
+                 _fixture.Build<Person>()
+                .With(temp => temp.Email, "test2@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+
+                  _fixture.Build<Person>()
+                .With(temp => temp.Email, "test3@example.com")
+                .With(temp => temp.Country, null as Country)
+                .Create(),
+            };
+
+            List<PersonResponse> personsListFromAddPersonExpected = persons.Select(temp => temp.ToPersonResponse()).ToList();
+
             //print personListFromAddPerson
             _testOutputHelper.WriteLine("Expected: ");
-            foreach (PersonResponse personResponse in personsListFromAddPerson)
+            foreach (PersonResponse personResponse in personsListFromAddPersonExpected)
             {
                 _testOutputHelper.WriteLine(personResponse.ToString());
             }
+
+            //mocking GetAllPersons()
+            _personsRepositoryMock.Setup(temp => temp.GetAllPersons()).ReturnsAsync(persons);
+            //Act
             List<PersonResponse> personsResponseFromGetAllPersons = await _personsService.GetAllPersons();
 
+            //no need of mocking, because we aren't calling any repository in the service for GetSortedPersons()
             List<PersonResponse> actualPersonsListFromGetSortedPerson = await _personsService.GetSortedPersons(personsResponseFromGetAllPersons, nameof(Person.PersonName), SortOrderOptions.DESC);
 
             //print actualPersonsListFromAddPerson
@@ -429,14 +423,6 @@ namespace CRUDTests
             {
                 _testOutputHelper.WriteLine(personResponse.ToString());
             }
-
-            //personsListFromAddPerson = personsListFromAddPerson.OrderByDescending(p=>p.PersonName).ToList();
-
-            //Assert
-            //for(int i = 0; i < personsListFromAddPerson.Count; i++)
-            //{
-            //    Assert.Equal(personsListFromAddPerson[i], actualPersonsListFromGetSortedPerson[i]);
-            //}
             actualPersonsListFromGetSortedPerson.Should().BeInDescendingOrder(temp => temp.PersonName);
         }
         #endregion
