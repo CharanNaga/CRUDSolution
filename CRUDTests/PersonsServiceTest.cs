@@ -1,4 +1,5 @@
 ﻿using Entities;
+using EntityFrameworkCoreMock;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -18,14 +19,33 @@ namespace CRUDTests
         //constructor
         public PersonsServiceTest(ITestOutputHelper testOutputHelper)
         {
-            _countriesService = new CountriesService(
-                new ApplicationDbContext(
+            //Creating empty persons list to test.
+            var initialCountriesList = new List<Country>() { };
+            var initialPersonsList = new List<Person>() { };
+
+            //Mocking the ApplicationDbContext into a Mocked Dbcontext
+            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
                     new DbContextOptionsBuilder<ApplicationDbContext>().Options
-                    ));
-            _personsService = new PersonsService(
-                 new ApplicationDbContext(
-                    new DbContextOptionsBuilder<ApplicationDbContext>().Options
-                    ),_countriesService);
+                    );
+
+            //Making use of Mocked DbContext as an application dbcontext, so that it doesn't involve interacting with the files or databases. (isolation constraint of tests)
+            var dbContext = dbContextMock.Object;
+
+            //creating MockedDbSet for the Countries & Persons Table with the empty seeded lists
+            dbContextMock.CreateDbSetMock(temp => temp.Countries, initialCountriesList);
+            dbContextMock.CreateDbSetMock(temp => temp.Persons, initialPersonsList);
+
+            //_countriesService = new CountriesService(
+            //    new ApplicationDbContext(
+            //        new DbContextOptionsBuilder<ApplicationDbContext>().Options
+            //        ));
+            //_personsService = new PersonsService(
+            //     new ApplicationDbContext(
+            //        new DbContextOptionsBuilder<ApplicationDbContext>().Options
+            //        ),_countriesService);
+
+            _countriesService = new CountriesService(dbContext);
+            _personsService = new PersonsService(dbContext,_countriesService);
             _testOutputHelper = testOutputHelper;
         }
 
