@@ -17,45 +17,27 @@ namespace CRUDTests
     public class PersonsServiceTest
     {
         //private field
+        #region Private readonly fields
         private readonly IPersonsService _personsService;
-        private readonly ICountriesService _countriesService;
 
         private readonly IPersonsRepository _personsRepository;
         private readonly Mock<IPersonsRepository> _personsRepositoryMock;
 
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly IFixture _fixture; //TO work with autofixture
+        #endregion
 
         //constructor
+        #region Constructor
         public PersonsServiceTest(ITestOutputHelper testOutputHelper)
         {
             _fixture = new Fixture(); //creating obj of Fixture class to generate fake data.
             _personsRepositoryMock = new Mock<IPersonsRepository>(); //to provide dummy implementation of methods, using which we can mock any methods
             _personsRepository = _personsRepositoryMock.Object;
-
-            //Creating empty persons list to test.
-            var initialCountriesList = new List<Country>() { };
-            var initialPersonsList = new List<Person>() { };
-
-            //Mocking the ApplicationDbContext into a Mocked Dbcontext
-            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
-                    new DbContextOptionsBuilder<ApplicationDbContext>().Options
-                    );
-
-            //Making use of Mocked DbContext as an application dbcontext, so that it doesn't involve interacting with the files or databases. (isolation constraint of tests)
-            var dbContext = dbContextMock.Object;
-
-            //creating MockedDbSet for the Countries & Persons Table with the empty seeded lists
-            dbContextMock.CreateDbSetMock(temp => temp.Countries, initialCountriesList);
-            dbContextMock.CreateDbSetMock(temp => temp.Persons, initialPersonsList);
-
-            //_countriesService = new CountriesService(dbContext);
-            _countriesService = new CountriesService(null);
-
-            //_personsService = new PersonsService(dbContext,_countriesService);
             _personsService = new PersonsService(_personsRepository);
             _testOutputHelper = testOutputHelper;
         }
+        #endregion
 
         #region AddPerson
         //Three criteria..
@@ -65,12 +47,6 @@ namespace CRUDTests
         {
             //Arrange
             PersonAddRequest? request = null;
-
-            ////Assert
-            //await Assert.ThrowsAsync<ArgumentNullException>(async() => {
-            //    //Act
-            //    await _personsService.AddPerson(request);
-            //});
 
             //Writing Assertions using FluentAssertions
             Func<Task> action = async () =>
@@ -86,21 +62,13 @@ namespace CRUDTests
         [Fact]
         public async Task AddPerson_PersonNameIsNull_ToBeArgumentException()
         {
-            //Arrange
-            //PersonAddRequest request = new PersonAddRequest() { PersonName = null };
+            //Arrange            
             PersonAddRequest request = _fixture.Build<PersonAddRequest>()
                 .With(temp => temp.PersonName, null as string)
                 .Create();
             Person person = request.ToPerson();
             //mocking repository
             _personsRepositoryMock.Setup(temp => temp.AddPerson(It.IsAny<Person>())).ReturnsAsync(person);
-
-            ////Assert
-            //await Assert.ThrowsAsync<ArgumentException>(async() =>
-            //{
-            //    //Act
-            //    await _personsService.AddPerson(request);
-            //});
 
             //Writing Assertions using FluentAssertions
             Func<Task> action = async () =>
@@ -117,7 +85,6 @@ namespace CRUDTests
         public async Task AddPerson_FullPersonDetails_ToBeSuccessful()
         {
             //Arrange
-            //PersonAddRequest personAddRequest = _fixture.Create<PersonAddRequest>(); //create method initializes all properties with some default values
 
             //build method doesn't create object directly, instead of assigning default values to properties directly, it will check for properties with model validations. If found, then ovveride defined property with a given value in With() & then create.
             PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>()
@@ -136,17 +103,10 @@ namespace CRUDTests
 
             //Act
             PersonResponse personResponseFromAddPerson = await _personsService.AddPerson(personAddRequest);
-            //List<PersonResponse> personResponseList = await _personsService.GetAllPersons();
             personResponseExpected.PersonID = personResponseFromAddPerson.PersonID;
 
             //Assert
-
-            //Assert.True(personResponseFromAddPerson.PersonID != Guid.Empty);
-
             personResponseFromAddPerson.PersonID.Should().NotBe(Guid.Empty);
-            //Assert.Contains(personResponseFromAddPerson, personResponseList);
-            //personResponseList.Should().Contain(personResponseFromAddPerson);
-
         }
         #endregion
 
@@ -166,7 +126,6 @@ namespace CRUDTests
             List<PersonResponse> personsResponseList = await _personsService.GetAllPersons();
 
             //Assert
-            //Assert.Empty(personsResponseList);
             personsResponseList.Should().BeEmpty();
         }
         //2. If we add few persons, then same persons should be returned.
@@ -215,12 +174,6 @@ namespace CRUDTests
                 _testOutputHelper.WriteLine(personResponse.ToString());
             }
 
-            //read each element from personsListFromAddPerson
-            //foreach (PersonResponse expectedPerson in personsListFromAddPerson)
-            //{
-            //    //Assert
-            //    Assert.Contains(expectedPerson, actualPersonsListFromAddPerson);
-            //}
             //Assert
             actualPersonsListFromGetPerson.Should().BeEquivalentTo(personsListFromAddPersonExpected);
         }
@@ -238,7 +191,6 @@ namespace CRUDTests
             PersonResponse? personResponse = await _personsService.GetPersonByPersonID(personID);
 
             //Assert
-            //Assert.Null(personResponse);
             personResponse.Should().BeNull();
         }
 
@@ -247,7 +199,6 @@ namespace CRUDTests
         public async Task GetPersonByPersonID_ValidPersonID_ToBeSuccessful()
         {
             //Arrange
-            //We shouldn't test more than one mthod at a time. So we will delete Country related logic.
 
             //We should call only GetPersonByPersonID(), so removing other methods by converting return types to Person
             Person person = _fixture.Build<Person>()
@@ -266,7 +217,6 @@ namespace CRUDTests
             PersonResponse? personResponseFromGetPerson = await _personsService.GetPersonByPersonID(person.PersonID);
 
             //Assert
-            //Assert.Equal(personResponseFromAddPerson, personResponseFromGetPerson);
             personResponseFromGetPerson.Should().Be(personResponseExpected);
         }
         #endregion
@@ -365,7 +315,7 @@ namespace CRUDTests
             //Act
             List<PersonResponse> actualPersonsListFromGetFilteredPerson = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "ha");
 
-            //print actualPersonsListFromAddPerson
+            //print actualPersonsListFromGetFilteredPerson
             _testOutputHelper.WriteLine("Actual: ");
             foreach (PersonResponse personResponse in actualPersonsListFromGetFilteredPerson)
             {
@@ -402,7 +352,7 @@ namespace CRUDTests
 
             List<PersonResponse> personsListFromAddPersonExpected = persons.Select(temp => temp.ToPersonResponse()).ToList();
 
-            //print personListFromAddPerson
+            //print personListFromAddPersonExpected
             _testOutputHelper.WriteLine("Expected: ");
             foreach (PersonResponse personResponse in personsListFromAddPersonExpected)
             {
@@ -417,7 +367,7 @@ namespace CRUDTests
             //no need of mocking, because we aren't calling any repository in the service for GetSortedPersons()
             List<PersonResponse> actualPersonsListFromGetSortedPerson = await _personsService.GetSortedPersons(personsResponseFromGetAllPersons, nameof(Person.PersonName), SortOrderOptions.DESC);
 
-            //print actualPersonsListFromAddPerson
+            //print actualPersonsListFromGetSortedPerson
             _testOutputHelper.WriteLine("Actual: ");
             foreach (PersonResponse personResponse in actualPersonsListFromGetSortedPerson)
             {
@@ -513,7 +463,6 @@ namespace CRUDTests
             PersonResponse personResponseFromUpdate = await _personsService.UpdatePerson(personUpdateRequest);
 
             //Assert
-            //Assert.Equal(personResponseFromGet,personResponseFromUpdate);
             personResponseFromUpdate.Should().Be(personResponseExpected);
         }
         #endregion
@@ -555,7 +504,6 @@ namespace CRUDTests
             bool isDeleted = await _personsService.DeletePerson(Guid.NewGuid());
 
             //Assert 
-            //Assert.False(isDeleted);
             isDeleted.Should().BeFalse();
         }
         #endregion
