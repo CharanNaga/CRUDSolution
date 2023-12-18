@@ -14,8 +14,8 @@ namespace Entities
         public ApplicationDbContext(DbContextOptions options):base(options)
         {
         }
-        public DbSet<Country> Countries { get; set; }
-        public DbSet<Person> Persons { get; set;}
+        public virtual DbSet<Country> Countries { get; set; }
+        public virtual DbSet<Person> Persons { get; set;}
 
         //Inorder to bind the dbsets to corresponding tables, we will override OnModelCreating()
         protected override void OnModelCreating(ModelBuilder modelBuilder)
