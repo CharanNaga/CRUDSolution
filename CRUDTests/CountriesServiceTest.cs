@@ -159,9 +159,15 @@ namespace CRUDTests
         #region GetAllCountries
         //1. Without adding any country, list should be empty. List of countries should be empty before adding any countries.
         [Fact]
-        public async Task GetAllCountries_EmptyList()
+        public async Task GetAllCountries_EmptyList_ToBeEmptyList()
         {
-            //Acts
+            //Arrange
+            List<Country> countries = new List<Country>();
+
+            //mocking GetAllCountries()
+            _countriesRepositoryMock.Setup(temp=>temp.GetAllCountries()).ReturnsAsync(countries);
+
+            //Act
             List<CountryResponse> actualCountryResponseList = await _countriesService.GetAllCountries();
 
             //Assert
@@ -171,32 +177,24 @@ namespace CRUDTests
 
         //2. If we add few countries, then same countries should be returned.
         [Fact]
-        public async Task GetAllCountries_AddFewCountries()
+        public async Task GetAllCountries_ShouldHaveFewCountries()
         {
             //Arrange
-            List<CountryAddRequest> countryAddRequests = new List<CountryAddRequest>()
+            List<Country> countries = new List<Country>()
             {
-               //new CountryAddRequest(){CountryName = "India"},
-               //new CountryAddRequest(){CountryName = "Australia"}
-
-               _fixture.Create<CountryAddRequest>(),
-               _fixture.Create<CountryAddRequest>()
+               _fixture.Build<Country>().With(temp=>temp.Persons,null as List<Person>).Create(),
+              _fixture.Build<Country>().With(temp=>temp.Persons,null as List<Person>).Create(),
             };
 
             //Act
-            List<CountryResponse> countriesListFromAddCountry = new List<CountryResponse>();
-            foreach(CountryAddRequest countryRequest in countryAddRequests) //as AddCountry return type is CountryResponse. We initialize an empty list of CountryResponse type and will add the countries from request into the response list.
-            {
-                countriesListFromAddCountry.Add(await _countriesService.AddCountry(countryRequest));
-            }
+            List<CountryResponse> countriesListFromAddCountry = countries.Select(temp=>temp.ToCountryResponse()).ToList();
+
+            //mocking GetAllCountries()
+            _countriesRepositoryMock.Setup(temp => temp.GetAllCountries()).ReturnsAsync(countries);
 
             List<CountryResponse> actualContriesListFromGetCountry = await _countriesService.GetAllCountries();
 
-            //read each element from countriesListFromAddCountry
-            //foreach(CountryResponse expectedCountry in countriesListFromAddCountry)
-            //{
-            //    Assert.Contains(expectedCountry, actualContriesListFromGetCountry);
-            //}
+            //Assert
             actualContriesListFromGetCountry.Should().BeEquivalentTo(countriesListFromAddCountry);
         }
         #endregion
