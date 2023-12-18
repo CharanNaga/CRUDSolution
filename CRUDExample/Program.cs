@@ -19,7 +19,7 @@ builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IPersonsService, PersonsService>();
 
 //adding DbContext as a service
-builder.Services.AddDbContext<PersonsDbContext>( //by default scoped service.
+builder.Services.AddDbContext<ApplicationDbContext>( //by default scoped service.
     options =>
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

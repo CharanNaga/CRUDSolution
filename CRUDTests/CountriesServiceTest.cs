@@ -14,8 +14,8 @@ namespace CRUDTests
         public CountriesServiceTest()
         {
             _countriesService = new CountriesService(
-                new PersonsDbContext(
-                    new DbContextOptionsBuilder<PersonsDbContext>().Options
+                new ApplicationDbContext(
+                    new DbContextOptionsBuilder<ApplicationDbContext>().Options
                     ));
         }
         #region AddCountry
