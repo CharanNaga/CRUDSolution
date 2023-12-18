@@ -25,6 +25,9 @@ namespace CRUDTests
             //Making use of Mocked DbContext as an application dbcontext, so that it doesn't involve interacting with the files or databases. (isolation constraint of tests)
             var dbContext = dbContextMock.Object;
 
+            //creating MockedDbSet for the Country Table with the empty seeded countries list
+            dbContextMock.CreateDbSetMock(temp => temp.Countries, initialCountriesList);
+
             //passing the same mocked dbcontext options to the Service constructor so that services receive this mocked dbcontext, which performs dummy implementation.
             _countriesService = new CountriesService(dbContext);
         }
