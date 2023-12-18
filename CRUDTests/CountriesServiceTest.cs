@@ -13,12 +13,16 @@ namespace CRUDTests
 {
     public class CountriesServiceTest
     {
+        //private fields
+        #region Private readonly fields
         private readonly ICountriesService _countriesService;
         private readonly ICountriesRepository _countriesRepository;
         private readonly Mock<ICountriesRepository> _countriesRepositoryMock;
         private readonly IFixture _fixture;
+        #endregion
 
         //constructor
+        #region Constructor
         public CountriesServiceTest()
         {
             _fixture = new Fixture();
@@ -26,6 +30,7 @@ namespace CRUDTests
             _countriesRepository = _countriesRepositoryMock.Object;
             _countriesService = new CountriesService(_countriesRepository);
         }
+        #endregion
 
         #region AddCountry
         //Four Requirements for Test..
@@ -202,34 +207,40 @@ namespace CRUDTests
         #region GetCountryByCountryID
         //1. if CountryID supplied is null, it should return null as CountryResponse.
         [Fact]
-        public async Task GetCountryByCountryID_NullCountryID()
+        public async Task GetCountryByCountryID_NullCountryID_ToBeNull()
         {
             //Arrange
             Guid? countryId = null;
+
+            //mocking GetCountryByCountryID()
+            _countriesRepositoryMock.Setup(
+                temp => temp.GetCountryByCountryID(It.IsAny<Guid>()))
+                .ReturnsAsync(null as Country);
 
             //Act 
             CountryResponse? countryResponseFromGetCountryById = await _countriesService.GetCountryByCountryID(countryId);
 
             //Assert
-            //Assert.Null(countryResponseFromGetCountryById); //if null, test case pass.
             countryResponseFromGetCountryById.Should().BeNull();
         }
 
         //2. if valid CountryID is supplied, return matching CountryDetails as CountryResponse Object.
         [Fact]
-        public async Task GetCountryByCountryID_ValidCountryID()
+        public async Task GetCountryByCountryID_ValidCountryID_ToBeSuccessful()
         {
             //Arrange
-            //add country object first, then search the country by given id.
-            //CountryAddRequest countryAddRequest = new CountryAddRequest() { CountryName = "Japan" };
-            CountryAddRequest countryAddRequest = _fixture.Create<CountryAddRequest>();
-            CountryResponse countryResponseFromAddCountry = await _countriesService.AddCountry(countryAddRequest);
+            Country country = _fixture.Build<Country>().With(temp=>temp.Persons,null as List<Person>).Create();
+            CountryResponse countryResponseFromAddCountry = country.ToCountryResponse();
+
+            //mocking GetCountryByCountryID()
+            _countriesRepositoryMock.Setup(
+                temp => temp.GetCountryByCountryID(It.IsAny<Guid>()))
+                .ReturnsAsync(country);
 
             //Act
-            CountryResponse? countryResponseFromGetCountry = await _countriesService.GetCountryByCountryID(countryResponseFromAddCountry.CountryID);
+            CountryResponse? countryResponseFromGetCountry = await _countriesService.GetCountryByCountryID(country.CountryID);
 
             //Assert
-            //Assert.Equal(countryResponseFromAddCountry, countryResponseFromGetCountry);
             countryResponseFromGetCountry.Should().Be(countryResponseFromAddCountry);
         }
         #endregion
