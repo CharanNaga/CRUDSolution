@@ -35,7 +35,8 @@ if(app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 
 //Configuring wkhtmltopdf file path here to identify the PDF file
-RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
+if(app.Environment.IsEnvironment("Test") == false)
+    RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
 app.UseStaticFiles();
 app.UseRouting();
