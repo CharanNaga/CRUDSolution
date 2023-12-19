@@ -42,3 +42,5 @@ app.UseRouting();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { } //we can access automatic generated program class programatically anywhere in the application
