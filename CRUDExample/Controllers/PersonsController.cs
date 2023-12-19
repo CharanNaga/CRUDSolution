@@ -82,7 +82,7 @@ namespace CRUDExample.Controllers
                         Value = temp.CountryID.ToString()
                     });
                 ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                return View();
+                return View(request);
             }
             //calling service
             PersonResponse personResponse = await _personsService.AddPerson(request);
