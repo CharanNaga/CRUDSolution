@@ -59,5 +59,67 @@ namespace CRUDTests
             viewResult.ViewData.Model.Should().Be(personsResponseList);
         }
         #endregion
+
+        #region Create
+        [Fact]
+        //1. HttpPost Create Action Method for Action with model errors.
+        public async Task Create_IfModelErrors_ToReturnCreateView()
+        {
+            //Arrange
+            PersonAddRequest personAddRequest = _fixture.Create<PersonAddRequest>();
+            PersonResponse personResponse = _fixture.Create<PersonResponse>();
+            List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
+
+            //mocking GetAllCountries() & AddPerson()
+            _countriesServiceMock.Setup(
+                temp=>temp.GetAllCountries())
+                .ReturnsAsync(countries);
+
+            _personsServiceMock.Setup(
+                temp=>temp.AddPerson(It.IsAny<PersonAddRequest>()))
+                .ReturnsAsync(personResponse);
+
+            PersonsController personsController = new PersonsController(_personsService, _countriesService);
+
+            //Act
+            personsController.ModelState.AddModelError("PersonName", "Person Name can't be blank");
+            IActionResult result = await personsController.Create(personAddRequest);
+
+            //Assert
+            ViewResult viewResult = Assert.IsType<ViewResult>(result);
+            viewResult.ViewData.Model.Should().BeAssignableTo<PersonAddRequest>();
+            viewResult.ViewData.Model.Should().Be(personAddRequest);
+           
+        }
+
+        [Fact]
+        //2.HttpPost Action method for Create with no model state errors
+        public async Task Create_IfNoModelErrors_ToReturnRedirectToIndex()
+        {
+            //Arrange
+            PersonAddRequest personAddRequest = _fixture.Create<PersonAddRequest>();
+            PersonResponse personResponse = _fixture.Create<PersonResponse>();
+            List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
+
+            //mocking GetAllCountries() & AddPerson()
+            _countriesServiceMock.Setup(
+                temp => temp.GetAllCountries())
+                .ReturnsAsync(countries);
+
+            _personsServiceMock.Setup(
+                temp => temp.AddPerson(It.IsAny<PersonAddRequest>()))
+                .ReturnsAsync(personResponse);
+
+            PersonsController personsController = new PersonsController(_personsService, _countriesService);
+
+            //Act
+            IActionResult result = await personsController.Create(personAddRequest);
+
+            //Assert
+            RedirectToActionResult redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            redirectToActionResult.ActionName.Should().Be("Index");
+        }
+
+        #endregion
     }
 }
