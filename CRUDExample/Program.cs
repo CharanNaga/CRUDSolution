@@ -31,6 +31,14 @@ builder.Services.AddDbContext<ApplicationDbContext>( //by default scoped service
 
 var app = builder.Build();
 
+//Creating Logs
+//LogLevel => Debug, Information, Warning, Error, & Critical. If min loglevel is set to Information, we can access all logs apart from Debug.
+app.Logger.LogDebug("debug-message");
+app.Logger.LogInformation("information-message"); //Minimum log level is set to information, when we run application only we can see logs apart from Debug in Kestrel window. which we can set in appsettings.json
+app.Logger.LogWarning("warning-message");
+app.Logger.LogError("error-message");
+app.Logger.LogCritical("critical-message");
+
 if(app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 
