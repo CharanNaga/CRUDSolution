@@ -7,6 +7,16 @@ using ServiceContracts;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Configuring Logging
+builder.Host.ConfigureLogging(loggingProvider =>
+{
+    loggingProvider.ClearProviders(); //clears the providers if any of Console, Debug & Event Viewer
+    loggingProvider.AddConsole(); //gives log messages only in Console
+    loggingProvider.AddDebug(); //gives log messages only in Debug
+    loggingProvider.AddEventLog(); //gives log messages only in Event Viewer
+});
+
 builder.Services.AddControllersWithViews();
 
 //add services into IoC Container
