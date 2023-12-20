@@ -15,12 +15,14 @@ namespace CRUDExample.Controllers
         //private fields
         private readonly IPersonsService _personsService;
         private readonly ICountriesService _countriesService;
+        private readonly ILogger<PersonsController> _logger;
 
         //constructor
-        public PersonsController(IPersonsService personsService, ICountriesService countriesService)
+        public PersonsController(IPersonsService personsService, ICountriesService countriesService, ILogger<PersonsController> logger)
         {
             _personsService = personsService;
             _countriesService = countriesService;
+            _logger = logger;
         }
 
         //[Route("index")] //read as "persons/index"
@@ -28,6 +30,14 @@ namespace CRUDExample.Controllers
         [Route("/")] // overriden as just "/", / indicates overriding default url
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
+            //writing log message to indicate that ww are in Index action method
+            _logger.LogInformation("Index action method of PersonsController");
+
+            //writing Index() method parameters using Debug
+            _logger.LogDebug(
+                $"searchBy:{searchBy}, searchString:{searchString}, sortBy:{sortBy}, sortOrder:{sortOrder}");
+
+
             //Searching
             ViewBag.SearchFields = new Dictionary<string, string>()
             {//property name & display name
