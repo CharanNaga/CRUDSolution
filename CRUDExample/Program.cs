@@ -1,4 +1,5 @@
 using Entities;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using RepositoryContracts;
@@ -39,6 +40,13 @@ builder.Services.AddDbContext<ApplicationDbContext>( //by default scoped service
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
 
+//adding HttpLogging as a service
+builder.Services.AddHttpLogging(options=>
+{
+    options.LoggingFields = HttpLoggingFields.RequestProperties 
+    | HttpLoggingFields.ResponsePropertiesAndHeaders;
+});
+
 var app = builder.Build();
 
 //Creating Logs
@@ -53,8 +61,10 @@ var app = builder.Build();
 if(app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 
+app.UseHttpLogging(); //added HttpLogging to the middleware pipeline
+
 //Configuring wkhtmltopdf file path here to identify the PDF file
-if(app.Environment.IsEnvironment("Test") == false)
+if (app.Environment.IsEnvironment("Test") == false)
     RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
 app.UseStaticFiles();
