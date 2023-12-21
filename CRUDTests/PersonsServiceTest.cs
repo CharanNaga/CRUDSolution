@@ -3,6 +3,7 @@ using Entities;
 using EntityFrameworkCoreMock;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using RepositoryContracts;
 using ServiceContracts;
@@ -23,6 +24,9 @@ namespace CRUDTests
         private readonly IPersonsRepository _personsRepository;
         private readonly Mock<IPersonsRepository> _personsRepositoryMock;
 
+        private readonly Mock<ILogger<PersonsService>> _loggerMock;
+        private readonly ILogger<PersonsService> _logger;
+
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly IFixture _fixture; //TO work with autofixture
         #endregion
@@ -34,7 +38,9 @@ namespace CRUDTests
             _fixture = new Fixture(); //creating obj of Fixture class to generate fake data.
             _personsRepositoryMock = new Mock<IPersonsRepository>(); //to provide dummy implementation of methods, using which we can mock any methods
             _personsRepository = _personsRepositoryMock.Object;
-            _personsService = new PersonsService(_personsRepository);
+            _loggerMock = new Mock<ILogger<PersonsService>>();
+            _logger = _loggerMock.Object;
+            _personsService = new PersonsService(_personsRepository,_logger);
             _testOutputHelper = testOutputHelper;
         }
         #endregion
