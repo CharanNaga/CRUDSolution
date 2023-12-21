@@ -14,7 +14,7 @@ namespace CRUDExample.Filters.ActionFilters
         public void OnActionExecuted(ActionExecutedContext context)
         {
             //Add "after execution" logic here
-            _logger.LogInformation($"{nameof(PersonsListActionFilter)}.{nameof(OnActionExecuted)} Filter method");
+            _logger.LogInformation("{FilterName}.{MethodName} Method", nameof(PersonsListActionFilter),nameof(OnActionExecuted));
 
             //Logic for Setting ActionMethod parameters into ViewBag for minimizing code in Controller
             PersonsController personsController = (PersonsController) context.Controller;
@@ -59,7 +59,7 @@ namespace CRUDExample.Filters.ActionFilters
             context.HttpContext.Items["Arguments"] = context.ActionArguments; //storing ActionArguments into a dictionary so that can be accessible in OnExecuted also, as that context doesnt support ActionArguments property
 
             //Add "before execution" logic here
-            _logger.LogInformation($"{nameof(PersonsListActionFilter)}.{nameof(OnActionExecuting)} Filter method");
+            _logger.LogInformation("{FilterName}.{MethodName} Method", nameof(PersonsListActionFilter), nameof(OnActionExecuting));
 
             if (context.ActionArguments.ContainsKey("searchBy"))
             {
