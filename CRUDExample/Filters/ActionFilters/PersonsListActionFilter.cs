@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using CRUDExample.Controllers;
+using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceContracts.DTO;
 
 namespace CRUDExample.Filters.ActionFilters
@@ -14,10 +15,49 @@ namespace CRUDExample.Filters.ActionFilters
         {
             //Add "after execution" logic here
             _logger.LogInformation($"{nameof(PersonsListActionFilter)}.{nameof(OnActionExecuted)} Filter method");
+
+            //Logic for Setting ActionMethod parameters into ViewBag for minimizing code in Controller
+            PersonsController personsController = (PersonsController) context.Controller;
+            var parameters =(IDictionary<string,object?>?) context.HttpContext.Items["Arguments"];
+
+            if (parameters != null)
+            {
+                if (parameters.ContainsKey("searchBy")) //Equivalent to assigning searchBy value to viewdata obj in controller
+                {
+                    personsController.ViewData["CurrentSearchBy"] = Convert.ToString(parameters["searchBy"]);
+                }
+
+                if (parameters.ContainsKey("searchString")) //Equivalent to assigning searchString value to viewdata obj in controller
+                {
+                    personsController.ViewData["CurrentSearchString"] = Convert.ToString(parameters["searchString"]);
+                }
+
+                if (parameters.ContainsKey("sortBy")) //Equivalent to assigning sortBy value to viewdata obj in controller
+                {
+                    personsController.ViewData["CurrentSortBy"] = Convert.ToString(parameters["sortBy"]);
+                }
+
+                if (parameters.ContainsKey("sortOrder")) //Equivalent to assigning sortOrder value to viewdata obj in controller
+                {
+                    personsController.ViewData["CurrentSortOrder"] = Convert.ToString(parameters["sortOrder"]);
+                }
+            }
+            //Searching
+            personsController.ViewBag.SearchFields = new Dictionary<string, string>()
+            {//property name & display name
+                {nameof(PersonResponse.PersonName), "Person Name" },
+                {nameof(PersonResponse.Email), "Email" },
+                {nameof(PersonResponse.DateOfBirth), "Date of Birth" },
+                {nameof(PersonResponse.Gender), "Gender" },
+                {nameof(PersonResponse.CountryID), "Country" },
+                {nameof(PersonResponse.Address), "Address" },
+            };
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
+            context.HttpContext.Items["Arguments"] = context.ActionArguments; //storing ActionArguments into a dictionary so that can be accessible in OnExecuted also, as that context doesnt support ActionArguments property
+
             //Add "before execution" logic here
             _logger.LogInformation($"{nameof(PersonsListActionFilter)}.{nameof(OnActionExecuting)} Filter method");
 
