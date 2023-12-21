@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CRUDExample.Filters.ActionFilters;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Rotativa.AspNetCore;
 using Rotativa.AspNetCore.Options;
@@ -28,6 +29,7 @@ namespace CRUDExample.Controllers
         //[Route("index")] //read as "persons/index"
         [Route("[action]")] //Same as above but implemented using Route Token. Holds good, when Action Method Name & Url Name are same otherwise explicitly mention the url string.
         [Route("/")] // overriden as just "/", / indicates overriding default url
+        [TypeFilter(typeof(PersonsListActionFilter))] //creates an obj of PersonsListActionFilter & attaches to the Index Action Method
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
             //writing log message to indicate that ww are in Index action method
