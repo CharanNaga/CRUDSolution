@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using RepositoryContracts;
+using Serilog;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -27,6 +28,9 @@ namespace CRUDTests
         private readonly Mock<ILogger<PersonsService>> _loggerMock;
         private readonly ILogger<PersonsService> _logger;
 
+        private readonly Mock<IDiagnosticContext> _diagnosticContextMock;
+        private readonly IDiagnosticContext _diagnosticContext;
+
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly IFixture _fixture; //TO work with autofixture
         #endregion
@@ -38,9 +42,14 @@ namespace CRUDTests
             _fixture = new Fixture(); //creating obj of Fixture class to generate fake data.
             _personsRepositoryMock = new Mock<IPersonsRepository>(); //to provide dummy implementation of methods, using which we can mock any methods
             _personsRepository = _personsRepositoryMock.Object;
+
             _loggerMock = new Mock<ILogger<PersonsService>>();
             _logger = _loggerMock.Object;
-            _personsService = new PersonsService(_personsRepository,_logger);
+
+            _diagnosticContextMock = new Mock<IDiagnosticContext>();
+            _diagnosticContext = _diagnosticContextMock.Object;
+
+            _personsService = new PersonsService(_personsRepository,_logger,_diagnosticContext);
             _testOutputHelper = testOutputHelper;
         }
         #endregion
