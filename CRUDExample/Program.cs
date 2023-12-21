@@ -4,25 +4,23 @@ using Microsoft.EntityFrameworkCore;
 using Repositories;
 using RepositoryContracts;
 using Rotativa.AspNetCore;
+using Serilog;
 using ServiceContracts;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Configuring Logging
-builder.Host.ConfigureLogging(loggingProvider =>
-{
-    loggingProvider.ClearProviders(); //clears the providers if any of Console, Debug & Event Viewer
-    loggingProvider.AddConsole(); //gives log messages only in Console
-    loggingProvider.AddDebug(); //gives log messages only in Debug
-    loggingProvider.AddEventLog(); //gives log messages only in Event Viewer
-});
+
+//Configuring Logging with Serilog
+builder.Host.UseSerilog(
+    (HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
+    {
+        loggerConfiguration
+        .ReadFrom.Configuration(context.Configuration) //read configuration settings from built-in IConfiguration
+        .ReadFrom.Services(services); //read current application services and make them available to serilog
+    });
 
 builder.Services.AddControllersWithViews();
-
-//add services into IoC Container
-//builder.Services.AddSingleton<ICountriesService, CountriesService>();
-//builder.Services.AddSingleton<IPersonsService, PersonsService>();
 
 //After we change all the methods in service methods to perform operations with datastore (from in-memory collections to Database),
 //we'll get an error saying can't consume scoped service( entities) from singleton service(services class).
