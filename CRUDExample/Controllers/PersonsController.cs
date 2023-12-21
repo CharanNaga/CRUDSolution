@@ -41,23 +41,30 @@ namespace CRUDExample.Controllers
 
 
             //Searching
-            ViewBag.SearchFields = new Dictionary<string, string>()
-            {//property name & display name
-                {nameof(PersonResponse.PersonName), "Person Name" },
-                {nameof(PersonResponse.Email), "Email" },
-                {nameof(PersonResponse.DateOfBirth), "Date of Birth" },
-                {nameof(PersonResponse.Gender), "Gender" },
-                {nameof(PersonResponse.CountryID), "Country" },
-                {nameof(PersonResponse.Address), "Address" },
-            };
+
+            //Written this functionality in PersonsListActionFilter
+            //ViewBag.SearchFields = new Dictionary<string, string>()
+            //{//property name & display name
+            //    {nameof(PersonResponse.PersonName), "Person Name" },
+            //    {nameof(PersonResponse.Email), "Email" },
+            //    {nameof(PersonResponse.DateOfBirth), "Date of Birth" },
+            //    {nameof(PersonResponse.Gender), "Gender" },
+            //    {nameof(PersonResponse.CountryID), "Country" },
+            //    {nameof(PersonResponse.Address), "Address" },
+            //};
+
             List<PersonResponse> persons = await _personsService.GetFilteredPersons(searchBy, searchString);
-            ViewBag.CurrentSearchBy = searchBy;
-            ViewBag.CurrentSearchString = searchString;
+
+            //Written these ViewBag fields functionality in PersonsListActionFilter
+            //ViewBag.CurrentSearchBy = searchBy;
+            //ViewBag.CurrentSearchString = searchString;
 
             //Sorting
             List<PersonResponse> sortedPersons = await _personsService.GetSortedPersons(persons, sortBy, sortOrder);
-            ViewBag.CurrentSortBy = sortBy;
-            ViewBag.CurrentSortOrder = sortOrder.ToString();
+
+            //Written these ViewBag fields functionality in PersonsListActionFilter
+            //ViewBag.CurrentSortBy = sortBy;
+            //ViewBag.CurrentSortOrder = sortOrder.ToString();
 
             return View(sortedPersons);
         }
