@@ -22,9 +22,6 @@ builder.Host.UseSerilog(
 
 builder.Services.AddControllersWithViews();
 
-//After we change all the methods in service methods to perform operations with datastore (from in-memory collections to Database),
-//we'll get an error saying can't consume scoped service( entities) from singleton service(services class).
-//so, we'llconvert the lifetimes of Countries & Persons Services to Scoped Service Lifetime.
 builder.Services.AddScoped<ICountriesRepository,CountriesRepository>();
 builder.Services.AddScoped<IPersonsRepository,PersonsRepository>();
 
@@ -47,14 +44,7 @@ builder.Services.AddHttpLogging(options=>
 
 var app = builder.Build();
 
-//Creating Logs
-//LogLevel => Debug, Information, Warning, Error, & Critical. If min loglevel is set to Information, we can access all logs apart from Debug.
-
-//app.Logger.LogDebug("debug-message");
-//app.Logger.LogInformation("information-message"); //Minimum log level is set to information, when we run application only we can see logs apart from Debug in Kestrel window. which we can set in appsettings.json
-//app.Logger.LogWarning("warning-message");
-//app.Logger.LogError("error-message");
-//app.Logger.LogCritical("critical-message");
+app.UseSerilogRequestLogging(); //enables endpoint completion log (HTTP GET Response success type log) i.e., adds extra log message as soon as request & resonse is completed
 
 if(app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
