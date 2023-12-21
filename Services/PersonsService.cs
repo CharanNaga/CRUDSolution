@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using RepositoryContracts;
+using Serilog;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -20,11 +21,13 @@ namespace Services
     {
         private readonly IPersonsRepository _personsRepository;
         private readonly ILogger<PersonsService> _logger;
+        private readonly IDiagnosticContext _diagnosticContext;
 
-        public PersonsService(IPersonsRepository personsRepository,ILogger<PersonsService> logger)
+        public PersonsService(IPersonsRepository personsRepository,ILogger<PersonsService> logger,IDiagnosticContext diagnosticContext)
         {
             _personsRepository = personsRepository;
             _logger = logger;
+            _diagnosticContext = diagnosticContext;
         }
 
         public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
@@ -118,6 +121,8 @@ namespace Services
 
                 _ => await _personsRepository.GetAllPersons()
             };
+
+            _diagnosticContext.Set("Persons", allPersons);
             //3. Convert matching persons from Person to PersonResponse type. (Done in switch case).
             //4. Return all matching PersonResponse objects
             return allPersons.Select(temp => temp.ToPersonResponse()).ToList();
