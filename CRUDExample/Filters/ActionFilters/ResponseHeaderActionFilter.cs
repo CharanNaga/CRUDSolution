@@ -3,12 +3,12 @@
 namespace CRUDExample.Filters.ActionFilters
 {
     //Parameterized Action Filter as it receives args key & value
-    public class ResponseHeaderActionFilter : IActionFilter,IOrderedFilter
+    public class ResponseHeaderActionFilter : IAsyncActionFilter,IOrderedFilter
     {
         
         private readonly ILogger<ResponseHeaderActionFilter> _logger;
-        private readonly string Key;
-        private readonly string Value;
+        private readonly string _key;
+        private readonly string _value;
 
         public int Order { get; set; }
 
@@ -16,24 +16,21 @@ namespace CRUDExample.Filters.ActionFilters
         public ResponseHeaderActionFilter(ILogger<ResponseHeaderActionFilter> logger, string key, string value, int order)
         {
             _logger = logger;
-            Key = key;
-            Value = value;
+            _key = key;
+            _value = value;
             Order = order;
         }
 
-        //after execution of Action method
-        public void OnActionExecuted(ActionExecutedContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            _logger.LogInformation("{FilterName}.{MethodName} method",nameof(ResponseHeaderActionFilter),nameof(OnActionExecuted));
-            context.HttpContext.Response.Headers[Key] = Value;
+            //before execution
+            _logger.LogInformation("{FilterName}.{MethodName} method - before", nameof(ResponseHeaderActionFilter), nameof(OnActionExecutionAsync));
 
-        }
+            await next(); //calls subsequent filter or action method
 
-        //before execution of Action Method
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
-            _logger.LogInformation("{FilterName}.{MethodName} method", nameof(ResponseHeaderActionFilter), nameof(OnActionExecuting));
-
+            //after execution
+            _logger.LogInformation("{FilterName}.{MethodName} method - after", nameof(ResponseHeaderActionFilter), nameof(OnActionExecutionAsync));
+            context.HttpContext.Response.Headers[_key] = _value;
         }
     }
 }
