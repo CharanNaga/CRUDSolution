@@ -1,4 +1,5 @@
 ﻿using CRUDExample.Filters.ActionFilters;
+using CRUDExample.Filters.ResultFilters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Rotativa.AspNetCore;
@@ -32,6 +33,7 @@ namespace CRUDExample.Controllers
         [Route("/")] // overriden as just "/", / indicates overriding default url
         [TypeFilter(typeof(PersonsListActionFilter), Order = 4)] //creates an obj of PersonsListActionFilter & attaches to the Index Action Method
         [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "CustomKey-FromAction", "CustomValue-FromAction", 1 }, Order = 1)] //passing arguments to filter constructor helpful in response headers.
+        [TypeFilter(typeof(PersonsListResultFilter))]
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
             //writing log message to indicate that ww are in Index action method
