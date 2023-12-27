@@ -11,6 +11,7 @@ namespace CRUDExample.Controllers
 {
     //[Route("persons")] //applied for all action methods in this controller, so we can remove persons/index as just index
     [Route("[controller]")] //Same as above but implementing using Route Token. In future, if controller name changes then this route token is helpful.
+    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "CustomKey-FromController", "CustomValue-FromController" })] //passing arguments to filter constructor helpful in response headers.
     public class PersonsController : Controller
     {
         //private fields
@@ -30,7 +31,7 @@ namespace CRUDExample.Controllers
         [Route("[action]")] //Same as above but implemented using Route Token. Holds good, when Action Method Name & Url Name are same otherwise explicitly mention the url string.
         [Route("/")] // overriden as just "/", / indicates overriding default url
         [TypeFilter(typeof(PersonsListActionFilter))] //creates an obj of PersonsListActionFilter & attaches to the Index Action Method
-        [TypeFilter(typeof(ResponseHeaderActionFilter),Arguments = new object[] {"X-Custom-Key","Custom-Value"})] //passing arguments to filter constructor helpful in response headers.
+        [TypeFilter(typeof(ResponseHeaderActionFilter),Arguments = new object[] {"CustomKey-FromAction","CustomValue-FromAction"})] //passing arguments to filter constructor helpful in response headers.
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
             //writing log message to indicate that ww are in Index action method

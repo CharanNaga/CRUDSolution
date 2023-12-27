@@ -1,3 +1,4 @@
+using CRUDExample.Filters.ActionFilters;
 using Entities;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,13 @@ builder.Host.UseSerilog(
         .ReadFrom.Services(services); //read current application services and make them available to serilog
     });
 
-builder.Services.AddControllersWithViews();
+//adds controllers & views as services
+builder.Services.AddControllersWithViews(options =>
+{
+    //options.Filters.Add<ResponseHeaderActionFilter>(); //set as global filter but it won't accept parameters
+    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
+    options.Filters.Add(new ResponseHeaderActionFilter(logger,"CustomKey-FromGlobal","CustomValue-FromGlobal"));
+});
 
 builder.Services.AddScoped<ICountriesRepository,CountriesRepository>();
 builder.Services.AddScoped<IPersonsRepository,PersonsRepository>();
