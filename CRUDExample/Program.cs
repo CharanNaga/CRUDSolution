@@ -11,7 +11,6 @@ using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 //Configuring Logging with Serilog
 builder.Host.UseSerilog(
     (HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
