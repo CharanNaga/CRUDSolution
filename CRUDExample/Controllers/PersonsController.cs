@@ -1,4 +1,5 @@
-﻿using CRUDExample.Filters.ActionFilters;
+﻿using CRUDExample.Filters;
+using CRUDExample.Filters.ActionFilters;
 using CRUDExample.Filters.AuthorizationFilter;
 using CRUDExample.Filters.ExceptionFilters;
 using CRUDExample.Filters.ResourceFilters;
@@ -17,6 +18,7 @@ namespace CRUDExample.Controllers
     [Route("[controller]")] //Same as above but implementing using Route Token. In future, if controller name changes then this route token is helpful.
     [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "CustomKey-FromController", "CustomValue-FromController", 3 }, Order = 3)] //passing arguments to filter constructor helpful in response headers.
     [TypeFilter(typeof(HandleExceptionFilter))]
+    [TypeFilter(typeof(PersonAlwaysRunResultFilter))]
     public class PersonsController : Controller
     {
         //private fields
@@ -38,6 +40,7 @@ namespace CRUDExample.Controllers
         [TypeFilter(typeof(PersonsListActionFilter), Order = 4)] //creates an obj of PersonsListActionFilter & attaches to the Index Action Method
         [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "CustomKey-FromAction", "CustomValue-FromAction", 1 }, Order = 1)] //passing arguments to filter constructor helpful in response headers.
         [TypeFilter(typeof(PersonsListResultFilter))]
+        [SkipFilter] //skipping the functionality of filter for Index Action Method only
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
             //writing log message to indicate that ww are in Index action method
@@ -108,7 +111,7 @@ namespace CRUDExample.Controllers
         [HttpPost]
         [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
         [TypeFilter(typeof(TokenAuthorizationFilter))]
-        [TypeFilter(typeof(PersonAlwaysRunResultFilter))]
+        //[TypeFilter(typeof(PersonAlwaysRunResultFilter))] //Commented and placed in controller level for demonstrating SkipFilter
         public async Task<IActionResult> Edit(PersonUpdateRequest personRequest)
         {
             PersonResponse? response = await _personsService.GetPersonByPersonID(personRequest.PersonID);
