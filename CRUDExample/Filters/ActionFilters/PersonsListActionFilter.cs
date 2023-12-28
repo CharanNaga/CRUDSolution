@@ -1,6 +1,7 @@
 ﻿using CRUDExample.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceContracts.DTO;
+using ServiceContracts.Enums;
 
 namespace CRUDExample.Filters.ActionFilters
 {
@@ -36,10 +37,18 @@ namespace CRUDExample.Filters.ActionFilters
                 {
                     personsController.ViewData["CurrentSortBy"] = Convert.ToString(parameters["sortBy"]);
                 }
+                else
+                {
+                    personsController.ViewData["CurrentSortBy"] = nameof(PersonResponse.PersonName);
+                }
 
                 if (parameters.ContainsKey("sortOrder")) //Equivalent to assigning sortOrder value to viewdata obj in controller
                 {
                     personsController.ViewData["CurrentSortOrder"] = Convert.ToString(parameters["sortOrder"]);
+                }
+                else
+                {
+                    personsController.ViewData["CurrentSortOrder"] = nameof(SortOrderOptions.ASC);
                 }
             }
             //Searching
