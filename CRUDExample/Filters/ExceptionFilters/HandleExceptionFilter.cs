@@ -6,10 +6,12 @@ namespace CRUDExample.Filters.ExceptionFilters
     public class HandleExceptionFilter : IExceptionFilter
     {
         private readonly ILogger<HandleExceptionFilter> _logger;
+        private readonly IHostEnvironment _hostEnvironment;
 
-        public HandleExceptionFilter(ILogger<HandleExceptionFilter> logger)
+        public HandleExceptionFilter(ILogger<HandleExceptionFilter> logger, IHostEnvironment hostEnvironment)
         {
             _logger = logger;
+            _hostEnvironment = hostEnvironment;
         }
 
         public void OnException(ExceptionContext context)
@@ -18,11 +20,14 @@ namespace CRUDExample.Filters.ExceptionFilters
                 nameof(HandleExceptionFilter),nameof(OnException),
                 context.Exception.GetType().ToString(),context.Exception.Message);
 
-            context.Result = new ContentResult() //short-circuiting other filters
+            if(_hostEnvironment.IsDevelopment())
             {
-                Content = context.Exception.Message,
-                StatusCode = 500
-            };
+                context.Result = new ContentResult() //short-circuiting other filters
+                {
+                    Content = context.Exception.Message,
+                    StatusCode = 500
+                };
+            }
         }
     }
 }
