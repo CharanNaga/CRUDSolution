@@ -20,12 +20,22 @@ builder.Host.UseSerilog(
         .ReadFrom.Services(services); //read current application services and make them available to serilog
     });
 
+//add ResponseHeaderActionFilter as a service
+builder.Services.AddTransient<ResponseHeaderActionFilter>();
+
 //adds controllers & views as services
 builder.Services.AddControllersWithViews(options =>
 {
     //options.Filters.Add<ResponseHeaderActionFilter>(5); //set as global filter but it won't accept parameters other than order
-    //var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
-    options.Filters.Add(new ResponseHeaderActionFilter("CustomKey-FromGlobal","CustomValue-FromGlobal",2));
+    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
+    //options.Filters.Add(new ResponseHeaderActionFilter("CustomKey-FromGlobal","CustomValue-FromGlobal",2));
+
+    options.Filters.Add(new ResponseHeaderActionFilter(logger)
+    {
+        Key = "CustomKey-FromGlobal",
+        Value = "CustomValue-FromGlobal",
+        Order = 2
+    });
 });
 
 builder.Services.AddScoped<ICountriesRepository,CountriesRepository>();
