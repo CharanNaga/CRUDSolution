@@ -2,24 +2,56 @@
 
 namespace CRUDExample.Filters.ActionFilters
 {
-    //Parameterized Action Filter as it receives args key & value
-    public class ResponseHeaderActionFilter : ActionFilterAttribute
+    public class ResponseHeaderFilterFactoryAttribute : Attribute, IFilterFactory
     {
-        private readonly string _key;
-        private readonly string _value;
+        public bool IsReusable => false;
+        private string Key { get; set; }
+        private string Value { get; set; }
+        private int Order { get; set; }
 
-        //injecting ILogger
-        public ResponseHeaderActionFilter(string key, string value, int order)
+        public ResponseHeaderFilterFactoryAttribute(string key, string value,int order)
         {
-            _key = key;
-            _value = value;
+            Key = key;
+            Value = value;
             Order = order;
         }
-
-        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        //controller invokes FilterFactory, FilterFactory invokes ActionFilter class
+        public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
         {
+            //var filter= new ResponseHeaderActionFilter();
+            var filter= serviceProvider.GetRequiredService<ResponseHeaderActionFilter>();
+            filter.Key = Key;
+            filter.Value = Value;
+            filter.Order = Order;
+
+            //return filter object
+            return filter;
+        }
+    }
+
+    //Parameterized Action Filter as it receives args key & value
+    public class ResponseHeaderActionFilter : IAsyncActionFilter,IOrderedFilter
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+        public int Order { get; set; }
+
+        private readonly ILogger<ResponseHeaderActionFilter> _logger;
+
+        public ResponseHeaderActionFilter(ILogger<ResponseHeaderActionFilter> logger)
+        {
+            _logger = logger;
+        }
+
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        {
+            //before logic
+            _logger.LogInformation("Before logic in ResponseHeaderActionFilter");
             await next(); //calls subsequent filter or action method
-            context.HttpContext.Response.Headers[_key] = _value;
+
+            //after logic
+            _logger.LogInformation("After logic in ResponseHeaderActionFilter");
+            context.HttpContext.Response.Headers[Key] = Value;
         }
     }
 }
