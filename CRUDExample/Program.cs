@@ -1,13 +1,6 @@
-using CRUDExample.Filters.ActionFilters;
-using Entities;
-using Microsoft.AspNetCore.HttpLogging;
-using Microsoft.EntityFrameworkCore;
-using Repositories;
-using RepositoryContracts;
+using CRUDExample;
 using Rotativa.AspNetCore;
 using Serilog;
-using ServiceContracts;
-using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,47 +12,7 @@ builder.Host.UseSerilog(
         .ReadFrom.Configuration(context.Configuration) //read configuration settings from built-in IConfiguration
         .ReadFrom.Services(services); //read current application services and make them available to serilog
     });
-
-//add ResponseHeaderActionFilter as a service
-builder.Services.AddTransient<ResponseHeaderActionFilter>();
-
-//adds controllers & views as services
-builder.Services.AddControllersWithViews(options =>
-{
-    //options.Filters.Add<ResponseHeaderActionFilter>(5); //set as global filter but it won't accept parameters other than order
-    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
-    //options.Filters.Add(new ResponseHeaderActionFilter("CustomKey-FromGlobal","CustomValue-FromGlobal",2));
-
-    options.Filters.Add(new ResponseHeaderActionFilter(logger)
-    {
-        Key = "CustomKey-FromGlobal",
-        Value = "CustomValue-FromGlobal",
-        Order = 2
-    });
-});
-
-builder.Services.AddScoped<ICountriesRepository,CountriesRepository>();
-builder.Services.AddScoped<IPersonsRepository,PersonsRepository>();
-
-builder.Services.AddScoped<ICountriesService, CountriesService>();
-builder.Services.AddScoped<IPersonsService, PersonsService>();
-
-//adding DbContext as a service
-builder.Services.AddDbContext<ApplicationDbContext>( //by default scoped service.
-    options =>
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    });
-
-//adding PersonsListActionFilter as a service
-builder.Services.AddTransient<PersonsListActionFilter>();
-
-//adding HttpLogging as a service
-builder.Services.AddHttpLogging(options=>
-{
-    options.LoggingFields = HttpLoggingFields.RequestProperties 
-    | HttpLoggingFields.ResponsePropertiesAndHeaders;
-});
+builder.Services.ConfigureServices(builder.Configuration); //seperated the added services into a startupextensions file
 
 var app = builder.Build();
 
