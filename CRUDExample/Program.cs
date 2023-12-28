@@ -41,6 +41,9 @@ builder.Services.AddDbContext<ApplicationDbContext>( //by default scoped service
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
 
+//adding PersonsListActionFilter as a service
+builder.Services.AddTransient<PersonsListActionFilter>();
+
 //adding HttpLogging as a service
 builder.Services.AddHttpLogging(options=>
 {
