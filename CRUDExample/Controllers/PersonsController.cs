@@ -86,7 +86,7 @@ namespace CRUDExample.Controllers
 
         [Route("[action]/{personID}")]
         [HttpGet]
-        [TypeFilter(typeof(TokenResultFilter))]
+        //[TypeFilter(typeof(TokenResultFilter))] //commenting this for demonstration of AlwaysRunResultFilter
         public async Task<IActionResult> Edit(Guid personID)
         {
             PersonResponse? response = await _personsService.GetPersonByPersonID(personID);
@@ -108,6 +108,7 @@ namespace CRUDExample.Controllers
         [HttpPost]
         [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
         [TypeFilter(typeof(TokenAuthorizationFilter))]
+        [TypeFilter(typeof(PersonAlwaysRunResultFilter))]
         public async Task<IActionResult> Edit(PersonUpdateRequest personRequest)
         {
             PersonResponse? response = await _personsService.GetPersonByPersonID(personRequest.PersonID);
