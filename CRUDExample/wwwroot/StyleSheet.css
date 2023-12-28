@@ -448,6 +448,10 @@ a.button-link:link, a.button-link:visited {
     position: relative;
     left: -10px;
 }
+    .search-button:hover {
+        background-color: whitesmoke;
+        text-decoration:underline;
+    }
 
 .button {
     padding: 8px 12px;
