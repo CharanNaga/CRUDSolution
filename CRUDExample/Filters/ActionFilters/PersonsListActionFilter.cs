@@ -54,9 +54,9 @@ namespace CRUDExample.Filters.ActionFilters
             //Searching
             personsController.ViewBag.SearchFields = new Dictionary<string, string>()
             {//property name & display name
-                {nameof(PersonResponse.PersonName), "Person Name" },
+                {nameof(PersonResponse.PersonName), "Name" },
                 {nameof(PersonResponse.Email), "Email" },
-                {nameof(PersonResponse.DateOfBirth), "Date of Birth" },
+                {nameof(PersonResponse.DateOfBirth), "DOB" },
                 {nameof(PersonResponse.Gender), "Gender" },
                 {nameof(PersonResponse.CountryID), "Country" },
                 {nameof(PersonResponse.Address), "Address" },
