@@ -14,12 +14,13 @@ namespace CRUDExample.Filters.ResultFilters
         {
             //before execution
             _logger.LogInformation("{FilterName}.{MethodName} - before execution",nameof(PersonsListResultFilter),nameof(OnResultExecutionAsync));
-
+            context.HttpContext.Response.Headers["Last-Modified"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm"); //placing in before logic from after logic, as when the response is started to communicate with client, we can't add new headers
+            
             await next(); //call the subsequent filter or IActionResult
 
             //after execution
             _logger.LogInformation("{FilterName}.{MethodName} - after execution", nameof(PersonsListResultFilter), nameof(OnResultExecutionAsync));
-            context.HttpContext.Response.Headers["Last-Modified"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+           
         }
     }
 }
