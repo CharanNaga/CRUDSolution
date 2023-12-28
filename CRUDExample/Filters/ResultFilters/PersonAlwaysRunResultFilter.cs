@@ -19,8 +19,12 @@ namespace CRUDExample.Filters.ResultFilters
 
         public void OnResultExecuting(ResultExecutingContext context)
         {
+            if(context.Filters.OfType<SkipFilter>().Any())
+            {
+                return;
+            }
             _logger.LogInformation("{FilterName}.{MethodName} always run filter executing",
-                nameof(PersonAlwaysRunResultFilter),nameof(OnResultExecuting));
+                nameof(PersonAlwaysRunResultFilter), nameof(OnResultExecuting));
         }
     }
 }
