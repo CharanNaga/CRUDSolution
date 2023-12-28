@@ -16,7 +16,9 @@ namespace CRUDExample.Controllers
 {
     //[Route("persons")] //applied for all action methods in this controller, so we can remove persons/index as just index
     [Route("[controller]")] //Same as above but implementing using Route Token. In future, if controller name changes then this route token is helpful.
-    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "CustomKey-FromController", "CustomValue-FromController", 3 }, Order = 3)] //passing arguments to filter constructor helpful in response headers.
+    //[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "CustomKey-FromController", "CustomValue-FromController", 3 }, Order = 3)] //passing arguments to filter constructor helpful in response headers.
+
+    [ResponseHeaderActionFilter("CustomKey-FromController", "CustomValue-FromController", 3)]
     [TypeFilter(typeof(HandleExceptionFilter))]
     [TypeFilter(typeof(PersonAlwaysRunResultFilter))]
     public class PersonsController : Controller
@@ -39,7 +41,9 @@ namespace CRUDExample.Controllers
         [Route("/")] // overriden as just "/", / indicates overriding default url
         //[TypeFilter(typeof(PersonsListActionFilter), Order = 4)] //creates an obj of PersonsListActionFilter & attaches to the Index Action Method
         [ServiceFilter(typeof(PersonsListActionFilter), Order = 4)] //creates an obj of PersonsListActionFilter & attaches to the Index Action Method but need to add this filter as a service in Ioc container
-        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "CustomKey-FromAction", "CustomValue-FromAction", 1 }, Order = 1)] //passing arguments to filter constructor helpful in response headers.
+        //[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "CustomKey-FromAction", "CustomValue-FromAction", 1 }, Order = 1)] //passing arguments to filter constructor helpful in response headers.
+        [ResponseHeaderActionFilter("CustomKey-FromAction", "CustomValue-FromAction", 1)]
+
         [TypeFilter(typeof(PersonsListResultFilter))]
         [SkipFilter] //skipping the functionality of filter for Index Action Method only
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
