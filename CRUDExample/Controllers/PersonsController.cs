@@ -1,5 +1,6 @@
 ﻿using CRUDExample.Filters.ActionFilters;
 using CRUDExample.Filters.AuthorizationFilter;
+using CRUDExample.Filters.ExceptionFilters;
 using CRUDExample.Filters.ResourceFilters;
 using CRUDExample.Filters.ResultFilters;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace CRUDExample.Controllers
     //[Route("persons")] //applied for all action methods in this controller, so we can remove persons/index as just index
     [Route("[controller]")] //Same as above but implementing using Route Token. In future, if controller name changes then this route token is helpful.
     [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "CustomKey-FromController", "CustomValue-FromController", 3 }, Order = 3)] //passing arguments to filter constructor helpful in response headers.
+    [TypeFilter(typeof(HandleExceptionFilter))]
     public class PersonsController : Controller
     {
         //private fields
