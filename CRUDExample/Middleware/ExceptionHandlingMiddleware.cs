@@ -37,8 +37,10 @@ namespace CRUDExample.Middleware
                     _logger.LogError("{ExceptionType}\n{ExceptionMessage}",
                        ex.GetType().ToString(), ex.Message);
                 }
-                httpContext.Response.StatusCode = 500;
-                await httpContext.Response.WriteAsync("Error Occured");
+                //httpContext.Response.StatusCode = 500;
+                //await httpContext.Response.WriteAsync("Error Occured");
+
+                throw; //rethrowing as it extends existing stacktrace. Exception thrown here will be caught by builtin exception handler
             }
         }
     }
