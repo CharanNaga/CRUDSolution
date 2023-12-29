@@ -97,7 +97,7 @@ namespace CRUDExample.Controllers
 
         [Route("[action]/{personID}")]
         [HttpGet]
-        //[TypeFilter(typeof(TokenResultFilter))] //commenting this for demonstration of AlwaysRunResultFilter
+        [TypeFilter(typeof(TokenResultFilter))] //commenting this for demonstration of AlwaysRunResultFilter
         public async Task<IActionResult> Edit(Guid personID)
         {
             PersonResponse? response = await _personsService.GetPersonByPersonID(personID);
@@ -127,6 +127,7 @@ namespace CRUDExample.Controllers
             {
                 return RedirectToAction("Index");
             }
+            personRequest.PersonID = Guid.NewGuid(); //making change for CustomException Case
             PersonResponse updatePerson = await _personsService.UpdatePerson(personRequest);
             return RedirectToAction("Index", "Persons");
         }
