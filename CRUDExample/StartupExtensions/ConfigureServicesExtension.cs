@@ -40,7 +40,9 @@ namespace CRUDExample
             services.AddScoped<ICountriesAdderService, CountriesAdderService>();
             services.AddScoped<ICountriesUploaderService, CountriesUploaderService>();
 
-            services.AddScoped<IPersonsGetterService, PersonsGetterService>();
+            //services.AddScoped<IPersonsGetterService, PersonsGetterService>();
+            services.AddScoped<IPersonsGetterService, PersonsGetterServiceWithFewExcelFields>(); //Added GetterService with the new functionality into IoC container. So in the client classes, FewExcelFields implementation would be available
+            services.AddScoped<PersonsGetterService, PersonsGetterService>();
             services.AddScoped<IPersonsAdderService, PersonsAdderService>();
             services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
             services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
