@@ -36,7 +36,10 @@ namespace CRUDExample
             services.AddScoped<ICountriesRepository, CountriesRepository>();
             services.AddScoped<IPersonsRepository, PersonsRepository>();
 
-            services.AddScoped<ICountriesService, CountriesService>();
+            services.AddScoped<ICountriesGetterService, CountriesGetterService>();
+            services.AddScoped<ICountriesAdderService, CountriesAdderService>();
+            services.AddScoped<ICountriesUploaderService, CountriesUploaderService>();
+
             services.AddScoped<IPersonsGetterService, PersonsGetterService>();
             services.AddScoped<IPersonsAdderService, PersonsAdderService>();
             services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
