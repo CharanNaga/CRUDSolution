@@ -22,7 +22,11 @@ app.UseSerilogRequestLogging(); //enables endpoint completion log (HTTP GET Resp
 if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 else
+{
+    app.UseExceptionHandler("/Error"); //builtin exceptional handler
     app.UseExceptionHandlingMiddleware();
+}
+    
 
 app.UseHttpLogging(); //added HttpLogging to the middleware pipeline
 
