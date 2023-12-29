@@ -1,8 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using Entities;
-using Exceptions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -11,9 +9,6 @@ using Serilog;
 using SerilogTimings;
 using ServiceContracts;
 using ServiceContracts.DTO;
-using ServiceContracts.Enums;
-using Services.Helpers;
-using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
 
@@ -32,7 +27,7 @@ namespace Services
             _diagnosticContext = diagnosticContext;
         }
 
-        public async Task<List<PersonResponse>> GetAllPersons()
+        public virtual async Task<List<PersonResponse>> GetAllPersons()
         {
             //log message
             _logger.LogInformation("GetAllPersons() service method");
@@ -53,7 +48,7 @@ namespace Services
             //   .Select(p => p.ToPersonResponse()).ToList();
         }
 
-        public async Task<PersonResponse?> GetPersonByPersonID(Guid? personID)
+        public virtual async Task<PersonResponse?> GetPersonByPersonID(Guid? personID)
         {
             //1. Check personID != null
             if (personID == null)
@@ -71,7 +66,7 @@ namespace Services
             return personsFromList.ToPersonResponse();
         }
 
-        public async Task<List<PersonResponse>> GetFilteredPersons(string searchBy, string? searchString)
+        public virtual async Task<List<PersonResponse>> GetFilteredPersons(string searchBy, string? searchString)
         {
             //writing log message
             _logger.LogInformation("GetFilteredPersons() Service method");
@@ -109,7 +104,7 @@ namespace Services
             return allPersons.Select(temp => temp.ToPersonResponse()).ToList();
         }
 
-        public async Task<MemoryStream> GetPersonsCSV()
+        public virtual async Task<MemoryStream> GetPersonsCSV()
         {
             MemoryStream memoryStream = new MemoryStream();
             StreamWriter streamWriter = new StreamWriter(memoryStream);
@@ -159,7 +154,7 @@ namespace Services
             return memoryStream;
         }
 
-        public async Task<MemoryStream> GetPersonsExcel()
+        public virtual async Task<MemoryStream> GetPersonsExcel()
         {
             MemoryStream memoryStream = new MemoryStream();
             using (ExcelPackage excelPackage = new ExcelPackage(memoryStream))
