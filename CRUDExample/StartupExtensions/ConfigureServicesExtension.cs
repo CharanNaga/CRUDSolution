@@ -41,8 +41,14 @@ namespace CRUDExample
             services.AddScoped<ICountriesUploaderService, CountriesUploaderService>();
 
             //services.AddScoped<IPersonsGetterService, PersonsGetterService>();
-            services.AddScoped<IPersonsGetterService, PersonsGetterServiceWithFewExcelFields>(); //Added GetterService with the new functionality into IoC container. So in the client classes, FewExcelFields implementation would be available
-            services.AddScoped<PersonsGetterService, PersonsGetterService>();
+
+            //1. Open closed principle using Interfaces.
+            //services.AddScoped<IPersonsGetterService, PersonsGetterServiceWithFewExcelFields>(); //Added GetterService with the new functionality into IoC container. So in the client classes, FewExcelFields implementation would be available
+
+            //2. Open closed principle using Inheritance.
+            services.AddScoped<IPersonsGetterService, PersonsGetterServiceChild>(); //Added GetterService with the new functionality into IoC container. So in the client classes, PersonsGetterServiceChild implementation would be available
+
+            services.AddScoped<PersonsGetterService, PersonsGetterService>(); //when any class asks object for PersonsGetterService, provide object of PersonsGetterService as an argument.
             services.AddScoped<IPersonsAdderService, PersonsAdderService>();
             services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
             services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
