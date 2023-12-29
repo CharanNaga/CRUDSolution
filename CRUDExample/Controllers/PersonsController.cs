@@ -20,7 +20,7 @@ namespace CRUDExample.Controllers
     //[ResponseHeaderActionFilter("CustomKey-FromController", "CustomValue-FromController", 3)]
 
     [ResponseHeaderFilterFactory("CustomKey-FromController", "CustomValue-FromController", 3)]
-    [TypeFilter(typeof(HandleExceptionFilter))]
+    //[TypeFilter(typeof(HandleExceptionFilter))]
     [TypeFilter(typeof(PersonAlwaysRunResultFilter))]
     public class PersonsController : Controller
     {
