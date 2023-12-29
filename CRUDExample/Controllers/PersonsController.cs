@@ -127,7 +127,6 @@ namespace CRUDExample.Controllers
             {
                 return RedirectToAction("Index");
             }
-            personRequest.PersonID = Guid.NewGuid(); //making change for CustomException Case
             PersonResponse updatePerson = await _personsService.UpdatePerson(personRequest);
             return RedirectToAction("Index", "Persons");
         }
