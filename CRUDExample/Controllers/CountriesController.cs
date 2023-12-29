@@ -6,10 +6,10 @@ namespace CRUDExample.Controllers
     [Route("[controller]")]
     public class CountriesController : Controller
     {
-        private readonly ICountriesService _countriesService;
-        public CountriesController(ICountriesService countriesService)
+        private readonly ICountriesUploaderService _countriesUploaderService;
+        public CountriesController(ICountriesUploaderService countriesUploaderService)
         {
-            _countriesService = countriesService;
+            _countriesUploaderService = countriesUploaderService;
         }
 
         [Route("UploadFromExcel")]
@@ -32,7 +32,7 @@ namespace CRUDExample.Controllers
                 ViewBag.ErrorMessage = "Unsupported file .xlsx file is expected";
                 return View();
             }
-            int countriesInserted = await _countriesService.UploadCountriesFromExcelFile(excelFile);
+            int countriesInserted = await _countriesUploaderService.UploadCountriesFromExcelFile(excelFile);
             ViewBag.Message = $"{countriesInserted} Countries inserted";
             return View();
         }

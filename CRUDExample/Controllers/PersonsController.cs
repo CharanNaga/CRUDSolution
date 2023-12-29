@@ -30,18 +30,18 @@ namespace CRUDExample.Controllers
         private readonly IPersonsUpdaterService _personsUpdaterService;
         private readonly IPersonsDeleterService _personsDeleterService;
         private readonly IPersonsSorterService _personsSorterService;
-        private readonly ICountriesService _countriesService;
+        private readonly ICountriesGetterService _countriesGetterService;
         private readonly ILogger<PersonsController> _logger;
 
         //constructor
-        public PersonsController(IPersonsGetterService personsGetterService,IPersonsAdderService personsAdderService,IPersonsUpdaterService personsUpdaterService,IPersonsDeleterService personsDeleterService,IPersonsSorterService personsSorterService, ICountriesService countriesService, ILogger<PersonsController> logger)
+        public PersonsController(IPersonsGetterService personsGetterService,IPersonsAdderService personsAdderService,IPersonsUpdaterService personsUpdaterService,IPersonsDeleterService personsDeleterService,IPersonsSorterService personsSorterService, ICountriesGetterService countriesGetterService, ILogger<PersonsController> logger)
         {
             _personsGetterService = personsGetterService;
             _personsAdderService = personsAdderService;
             _personsUpdaterService = personsUpdaterService;
             _personsDeleterService = personsDeleterService;
             _personsSorterService = personsSorterService;
-            _countriesService = countriesService;
+            _countriesGetterService = countriesGetterService;
             _logger = logger;
         }
 
@@ -72,7 +72,7 @@ namespace CRUDExample.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            List<CountryResponse> countries = await _countriesService.GetAllCountries();
+            List<CountryResponse> countries = await _countriesGetterService.GetAllCountries();
             ViewBag.Countries = countries.Select(temp =>
             new SelectListItem()
             {
@@ -103,7 +103,7 @@ namespace CRUDExample.Controllers
                 return RedirectToAction("Index");
             }
             PersonUpdateRequest updateRequest = response.ToPersonUpdateRequest();
-            List<CountryResponse> countries = await _countriesService.GetAllCountries();
+            List<CountryResponse> countries = await _countriesGetterService.GetAllCountries();
             ViewBag.Countries = countries.Select(temp =>
                 new SelectListItem()
                 {
