@@ -12,8 +12,8 @@ namespace CRUDTests
 {
     public class PersonsControllerTest
     {
-        private readonly ICountriesService _countriesService;
-        private readonly Mock<ICountriesService> _countriesServiceMock;
+        private readonly ICountriesGetterService _countriesGetterService;
+        private readonly Mock<ICountriesGetterService> _countriesGetterServiceMock;
 
         private readonly IPersonsGetterService _personsGetterService;
         private readonly IPersonsAdderService _personsAdderService;
@@ -34,8 +34,8 @@ namespace CRUDTests
         public PersonsControllerTest()
         {
             _fixture = new Fixture();
-            _countriesServiceMock = new Mock<ICountriesService>();
-            _countriesService = _countriesServiceMock.Object;
+            _countriesGetterServiceMock = new Mock<ICountriesGetterService>();
+            _countriesGetterService = _countriesGetterServiceMock.Object;
 
             _personsGetterServiceMock = new Mock<IPersonsGetterService>();
             _personsAdderServiceMock = new Mock<IPersonsAdderService>();
@@ -60,7 +60,7 @@ namespace CRUDTests
             List<PersonResponse> personsResponseList = _fixture.Create<List<PersonResponse>>();
             PersonsController personsController = new PersonsController(
                 _personsGetterService,_personsAdderService,_personsUpdaterService, 
-                _personsDeleterService,_personsSorterService,_countriesService,_logger);
+                _personsDeleterService,_personsSorterService,_countriesGetterService,_logger);
 
             //mocking GetFilteredPersons() Service method, as it is invoked in the Controller Index Action-Method
             _personsGetterServiceMock.Setup(
@@ -99,7 +99,7 @@ namespace CRUDTests
             List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
             //mocking GetAllCountries() & AddPerson()
-            _countriesServiceMock.Setup(
+            _countriesGetterServiceMock.Setup(
                 temp => temp.GetAllCountries())
                 .ReturnsAsync(countries);
 
@@ -109,7 +109,7 @@ namespace CRUDTests
 
             PersonsController personsController = new PersonsController(
                 _personsGetterService, _personsAdderService, _personsUpdaterService,
-                _personsDeleterService, _personsSorterService, _countriesService, _logger);
+                _personsDeleterService, _personsSorterService, _countriesGetterService, _logger);
 
             //Act
             IActionResult result = await personsController.Create(personAddRequest);
