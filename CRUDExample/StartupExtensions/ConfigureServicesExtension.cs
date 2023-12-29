@@ -37,7 +37,11 @@ namespace CRUDExample
             services.AddScoped<IPersonsRepository, PersonsRepository>();
 
             services.AddScoped<ICountriesService, CountriesService>();
-            services.AddScoped<IPersonsService, PersonsService>();
+            services.AddScoped<IPersonsGetterService, PersonsGetterService>();
+            services.AddScoped<IPersonsAdderService, PersonsAdderService>();
+            services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
+            services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
+            services.AddScoped<IPersonsSorterService, PersonsSorterService>();
 
             //adding DbContext as a service
             services.AddDbContext<ApplicationDbContext>( //by default scoped service.
