@@ -1,4 +1,5 @@
 using CRUDExample;
+using CRUDExample.Middleware;
 using Rotativa.AspNetCore;
 using Serilog;
 
@@ -18,8 +19,10 @@ var app = builder.Build();
 
 app.UseSerilogRequestLogging(); //enables endpoint completion log (HTTP GET Response success type log) i.e., adds extra log message as soon as request & resonse is completed
 
-if(app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
+else
+    app.UseExceptionHandlingMiddleware();
 
 app.UseHttpLogging(); //added HttpLogging to the middleware pipeline
 
